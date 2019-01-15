@@ -50,7 +50,7 @@ In the R code chunk below, please provide the code to:
 ```{r}
 rm(list=ls())
 getwd()
-setwd("C:/Users/andjr/Documents/GitHub/QB2019_Phillips/2.Worksheets/3.RStudio")
+setwd("/Users/philland/GitHub/QB2019_Phillips/2.Worksheets/3.RStudio")
 ```
 
 ## 3) USING R AS A CALCULATOR
@@ -131,16 +131,13 @@ j <- c(rnorm(5, mean = 8, sd = 2))
 z <- c(rnorm(5, mean = 25, sd = 10))
 k <- cbind (j, z)
 
-
-
-
 ```
 
 ***Question 1***: What does the `rnorm` function do? 
 What do the arguments in this function specify? 
 Remember to use `help()` or type `?rnorm`.
 
-> Answer 1:It generates a set of random numbers of a normal distribution that fit the specified mean and standard deviation. 
+> Answer 1:
 
 
 In the R code chunk below, do the following: 
@@ -153,7 +150,6 @@ m <- as.matrix(read.table("data/matrix.txt", sep = "\t", header = FALSE))
 n <- t(m)
 nrow(n)
 ncol(n)
-
 ```
 
 
@@ -183,7 +179,6 @@ In the R code chunk below, do the following:
 ```{r}
 meso <- read.table("data/zoop_nuts.txt", sep = "\t", header = TRUE)
 str(meso)
-
 ```
 
 ### Correlation
@@ -197,13 +192,12 @@ In the R-code chunk below, do the following:
 meso.num <- meso[,3:8]
 pairs(meso.num)
 cor1 <- cor(meso.num)
-
 ```
 
 
 ***Question 3***: Describe some of the general features based on the visualization and correlation analysis above?
 
-> Answer 3: It seems that there is a general positive trend between the zooplankton biomass and the TIN, SRP, TN, and TP, but not with between the zooplankton biomass and the chlorophyll a concentration. In fact, chlorophyll a has almost no variance across all observations, so there isn't anything interesting to show in relation to chlorophyll a concentration. The total phosphorous concentration has a positive correlation with total nitrogen concentration, the soluble reactive phosphorous concentration, the total inorganic nutrient concentration, and the zooplankton biomass.
+> Answer 3: It seems that there is a general positive trend between the zooplankton biomass and the TIN, SRP, TN, and TP, but not with between the zooplankton biomass and the chlorophyll a concentration. In fact, chlorophyll a has almost no variance across all observations, so there isn't anything interesting to show in relation to chlorophyll a concentration. The total phosphorous concentration has a positive correlation with total nitrogen concentration, the soluble reactive phosphorous concentration, the total inorganic nutrient concentration, and the zooplankton biomass. 
 
 
 In the R code chunk below, do the following:
@@ -212,11 +206,9 @@ In the R code chunk below, do the following:
 3) Use the print command from the handout to see the results of each correlation analysis.
 
 ```{r}
-require("psych")
 cor2 <- corr.test(meso.num, method = "pearson", adjust = "BH")
 cor3 <- corr.test(meso.num, method = "kendall", adjust = "BH")
 print(cor2, digits = 3)
-
 
 ```
 
@@ -228,7 +220,7 @@ With the Pearson's method, is there evidence for false discovery rate due to mul
 Why is false discovery rate important?
 
 > Answer 4: Yes, the p values changed depending on whether parametric or non-parametric methods were used. Specifically, using parametric methods made the p values much lower when looking at correlations between different values. This shows that the false discovery rate is higher when multiple comparisons are used. With a sample size of only 24, the assumptions of the central limit theorem are not met, and we're more likely to get false discoveries using parametric methods. 
-False discovery rate is important, because as we study biodiversity it is important that the limited efforts (there is a lot of nature and not a lot of biodiversity researchers) of researchers be focused in the best places--false discoveries may lead to false allocation of resources.
+False discovery rate is important, because as we study biodiversity it is important that the limited efforts (there is a lot of nature and not a lot of biodiversity researchers) of researchers be focused in the best places--false discoveries may lead to false allocation of resources. 
 
 ### Linear Regression
 
@@ -254,12 +246,6 @@ conf95 <- predict(fitreg, newdata = data.frame(TN = newTN), interval = c("confid
 matlines(newTN, conf95[, c("lwr", "upr")], type="l", lty = 2, lws = 1, col = "black")
 par(mfrow = c(2,2), mar = c(5.1 ,4.1 ,4.1 ,2.1))
 plot(fitreg)
-
-
-
-
-
-
 ```
 
 ***Question 5***: Interpret the results from the regression model
@@ -281,18 +267,13 @@ Using the R code chunk below, do the following:
 
 
 ```{r}
-NUTS <- factor(meso$NUTS, levels = c('L', 'M', 'H'))
-zp.means <- tapply(meso$ZP, NUTS, mean)
-sem <- function(x){sd(na.omit(x))/sqrt(length(na.omit(x)))}
-zp.sem <- tapply(meso$ZP, NUTS, sem)
-bp <- barplot(zp.means, ylim = c(0, round(max(meso$ZP), digits = 0)), pch = 15, cex = 1.25, las = 1, cex.lab = 1.4, cex.axis = 1.25, xlab = "nutrient supply", ylab = "zooplankton biomass (mg/L)", names.arg = c("low", "medium", "high"))
-arrows(x0 = bp, y0 = zp.means, y1 = zp.means - zp.sem, angle = 90, length = 0.1, lwd = 1)
-arrows(x0 = bp, y0 = zp.means, y1 = zp.means + zp.sem, angle = 90, length = 0.1, lwd = 1)
-fitanova <- aov(ZP ~ NUTS, data = meso)
-summary(fitanova)
-TukeyHSD(fitanova)
-par(mfrow = c(2, 2), mar = c(5.1, 4.1, 4.1, 2.1))
-plot(fitanova)
+
+test
+
+
+
+
+
 ```
 
 ## SYNTHESIS: SITE-BY-SPECIES MATRIX
@@ -323,10 +304,10 @@ The remaining columns of data refer to the biomass (µg/L) of different zooplank
 Describe what you learned below in the "Answer" section and include appropriate code in the R chunk.
 
 ```{r}
-meso <- read.table("data/zoops.txt", header = TRUE)
-str(meso)
-meso.num <- meso[, 3:8]
-meso.num
+
+
+
+
 ```
 
 ## SUBMITTING YOUR WORKSHEET
