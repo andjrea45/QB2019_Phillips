@@ -1,6 +1,6 @@
 ---
 title: '5\. Worksheet: Alpha Diversity'
-author: "Student Name; Z620: Quantitative Biodiversity, Indiana University"
+author: "Andrea Phillips; Z620: Quantitative Biodiversity, Indiana University"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: pdf_document
 geometry: margin=2.54cm
@@ -128,11 +128,11 @@ In the R code chunk below, do the following:
 5. Calculate coverage of that site
 
 ```{r}
-
-
-
-
-
+soilbac <- read.table("data/soilbac.txt", sep = "\t", header = TRUE, row.names = 1)
+soilbac.t <- as.data.frame(t(soilbac))
+soilbac1 <- soilbac.t[1,]
+S.obs(soilbac1)
+C(soilbac1)
 
 ```
 
@@ -142,11 +142,11 @@ a.  How many sequences did we recover from the sample `soilbac1`, i.e. *N*?
 b.  What is the observed richness of `soilbac1`? 
 c.  How does coverage compare between the BCI sample (`site1`) and the KBS sample (`soilbac1`)?
 
-> ***Answer 3a***:  
+> ***Answer 3a***:  We recovered 13310 sequences, aka variables.
 
-> ***Answer 3b***: 
+> ***Answer 3b***: The observed richness of soilbac1 is 1074 species. 
 
-> ***Answer 3c***:  
+> ***Answer 3c***:  The coverage of soilbac1 is probably better than that of site1 of the BCI sample. soilbac1 has a coverage of around 65%, meaning that 65% of the individuals in the sample were new/singleton species, while site1 had 93% of the individuals as new/singleton species. More effort was probably put into sampling soilbac1, because fewer species were singletons.
 
 
 ### Richness estimators
@@ -162,7 +162,7 @@ In the R code chunk below, do the following:
 4. Use these functions to estimate richness at `site1` and `soilbac1`. 
 
 ```{r}
-
+S.chao1 <- function(x = ""){S.obs(x) + (sum(x == 1)^2) / (2 * sum(x == 2))}
 
 
 
