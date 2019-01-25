@@ -1,6 +1,6 @@
 ---
 title: '6\. Worksheet: Diversity Sampling'
-author: "Student Name; Z620: Quantitative Biodiversity, Indiana University"
+author: "Andrea Phillips; Z620: Quantitative Biodiversity, Indiana University"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: pdf_document
 geometry: margin=2.54cm
@@ -39,7 +39,7 @@ Make sure to annotate your code using # symbols so others (including instructors
 
 ```{r}
 
-
+test
 
 
 ```
