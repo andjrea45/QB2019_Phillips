@@ -49,7 +49,6 @@ In the R code chunk below, provide the code to:
 ```{r}
 rm(list = ls())
 getwd()
-setwd("~/GitHub/QB2019_Phillips/2.Worksheets/8.BetaDiversity")
 
 package.list <- c('vegan', 'ade4', 'viridis', 'gplots', 'BiodiversityR', 'indicspecies')
 for (package in package.list) {
@@ -68,7 +67,7 @@ In the R code chunk below, do the following:
 2. explore the structure of the dataset.
 
 ```{r}
-# note, pleae do not print the dataset when submitting
+# note, please do not print the dataset when submitting
 data(doubs)
 
 str(doubs, max.level = 1)
@@ -116,7 +115,7 @@ beta.w <- function(site.by.species = ""){
 
 beta.w <- function(site.by.species = "", sitenum1 = "", sitenum2 = "", pairwise = FALSE)
   if (pairwise == TRUE){
-    if (sitenum == "" | sitenum2 == "") {
+    if (sitenum1 == "" | sitenum2 == "") {
       print("Error: please specify sites to compare")
       return =(NA)}
     site1 = site.by.species[sitenum1,]
@@ -131,14 +130,15 @@ beta.w <- function(site.by.species = "", sitenum1 = "", sitenum2 = "", pairwise 
   }
 
 #else{
-    #SbyS.pa <- decostand(site.by.species, method = "pa")
-    #S <- ncol(SbyS.pa[,which(colSums(SbyS.pa) >0)])
-    #a.bar <- mean(specnumber(SyS.pa))
+ #   SbyS.pa <- decostand(site.by.species, method = "pa")
+  #  S <- ncol(SbyS.pa[,which(colSums(SbyS.pa) >0)])
+   # a.bar <- mean(specnumber(SyS.pa))
     #b.w <- round(S/a.bar, 3) 
     #return(b.w)
   #}
 
-beta.w(site.by.species = fish, sitenum1 = site1, sitenum2 = site2)  
+beta.w(site.by.species = doubs$fish, sitenum1 = 1, sitenum2 = 2, pairwise = TRUE)  
+beta.w(site.by.species = doubs$fish, sitenum1 = 1, sitenum2 = 10, pairwise = TRUE)
 ```
 
 ***Question 3***: Using your `beta.w()` function above, answer the following questions:
@@ -147,16 +147,16 @@ a.  Describe how local richness ($\alpha$) and turnover ($\beta$) contribute to 
 b.  Is the fish assemblage at site 1 more similar to the one at site 2 or site 10?
 c.  Using your understanding of the equation $\beta_{w} = \gamma/\alpha$, how would your interpretation of $\beta$ change if we instead defined beta additively (i.e., $\beta = \gamma - \alpha$)?
 
-> ***Answer 3a***:  
-> ***Answer 3b***:  
-> ***Answer 3c***:  
+> ***Answer 3a***: In general, beta diversity between sites depends heavily on the alpha diversity of those sites. As the alpha diversity of a fish site changes, that is going to in turn affect the beta diversity between sites. Looking at turnover, this is what is going to affect the gamma diversity of the whole landscape. As single sites change, we see changes between sites, which means changes on the ecological landscape level. This makes sense, because in this case gamma is going to be the product of alpha and beta diversity. 
+> ***Answer 3b***: The fish assemblage at site 1 is more similar to site 10, with a beta.w of 0.714, than site 2 with a beta.w of 0.5. I believe this is interpreted as saying that site 1 and site 10 share 71.4% of their diversity, and site 1 and site 2 share 50% of their diversity. (Please correct me if I'm wrong, these indexes are way confusing to me :) ) 
+> ***Answer 3c***: This would change my interpretation to say that rather than meaning a proportion of (dis)similarity between sites, I would interpret beta to be an absolute value of diversity difference between the two sites, and requires knowledge of all of the sites to interpret. 
 
 ### The Resemblance Matrix
 In order to quantify $\beta$-diversity for more than two samples, we need to introduce a new primary ecological data structure: the **Resemblance Matrix**. 
 
 ***Question 4***: How do incidence- and abundance-based metrics differ in their treatment of rare species?
 
-> ***Answer 4***:  
+> ***Answer 4***: Incidence-based metrics are heavily influenced by differences between sites/samples. In other words, if the sites are dissimilar because some species are not shared, the incidence-based metrics are going to be affected. However, if he rare species shows up in both sites, we may not notice the effect of rare species. Abundance-based metrics, however, consider each species individually. I believe this would make the abundance-based metrics more likely to be affected by rare species. 
 
 In the R code chunk below, do the following:  
 
@@ -237,14 +237,27 @@ In the R code chunk below, do the following:
 5. identify influential species and add species coordinates to PCoA plot.
 
 ```{r}
+explainvar1 <- round(fish.pcoa$eig[1] / sum(fish.pcoa$eig), 3) * 100
+explainvar2 <- round(fish.pcoa$eig[2] / sum(fish.pcoa$eig), 3) * 100
+explainvar3 <- round(fish.pcoa$eig[3] / sum(fish.pcoa$eig), 3) * 100
+sum.eig <- sum(explainvar1, explainvar2, explainvar3)
 
+par(mar = c(5, 5, 1, 2) + 0.1)
 
+plot(fish.pcoa$points[ ,1], fish.pcoa$points[ ,2], ylim = c(-0.2, 0.7),
+     xlab = paste("PCoA 1 (", explainvar1, "%)", sep = ""),
+     ylab = paste("PCoA 2 (", explainvar2, "%)", sep = ""),
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
 
+axis(side = 1, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = T, lwd-ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2) 
 
-
-
-
-
+points(fish.pcoa$points[ ,1], fish.pcoa$points[ ,2],
+       pch = 19, cex = 3, bg = "gray", col = "gray")
+text(fish.pcoa$points[ ,1], fish.pcoa$points [ ,2],
+     labels = row.names(fish.pcoa$points))
 
 ```
 
@@ -254,12 +267,11 @@ In the R code chunk below, do the following:
 2. use a permutation test (999 permutations) to test the correlations of each species along each axis.
 
 ```{r}
+spe.corr <- add.spec.scores(fish.pcoa, fishREL, method = "cor.scores")$cproj
+corrcut <- 0.7
+imp.spp <- spe.corr[abs(spe.corr[ ,1]) >= corrcut | abs(spe.corr[ ,2]) >= corrcut, ]
 
-
-
-
-
-
+fit <- envfit(fish.pcoa, fishREL, perm = 999)
 ```
 
 ***Question 7***: Address the following questions about the ordination results of the `doubs` data set:
@@ -282,3 +294,10 @@ Finally, compare the compositional similarity of jelly beans in group A and grou
 
 2) Create a cluster diagram or ordination using the jelly bean data. 
 Are there any visual trends that would suggest a difference in composition between group A and group B?
+
+```{r}
+getwd()
+setwd("~/Github2/QB2019_Phillips/2.Worksheets/6.DiversitySampling")
+#jellybeanAB <- read.table("~/Github2/QB2019_Phillips/2.Worksheets/6.DiversitySampling/JellyBeans.txt", sep = "\t", row.names = 1, header = TRUE)
+#jellybeansource <- read.table("~/Github2/QB2019_Phillips/2.Worksheets/6.DiversitySampling/JellyBeans.Source.txt", sep = "\t", row.names = 1, header = TRUE)
+```
