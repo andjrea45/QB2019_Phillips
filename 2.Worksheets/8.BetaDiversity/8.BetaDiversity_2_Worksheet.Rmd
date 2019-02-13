@@ -40,10 +40,20 @@ In the R code chunk below, provide the code to:
 4. load the `vegan` R package (be sure to install if needed).  
 
 ```{r}
-rm(list = ls())
+#rm(list = ls())
 getwd()
-install.packages("vegan")
+install.packages("vegan", repos = "http://cran.us.r-project.org")
 require("vegan")
+#install.packages("OTUtable", repos = "http://cran.us.r-project.org")
+require("OTUtable")
+#install.packages("ade4", repos = "http://cran.us.r-project.org")
+require("ade4")
+#install.packages("indicspecies", repos = "http://cran.us.r-project.org")
+require("indicspecies")
+require("tidyverse")
+require("vegan")
+require("ggplot2")
+require("OTUtable")
 ```
 
 ## 2) LOADING DATA
@@ -52,12 +62,10 @@ In the R code chunk below, load the `doubs` dataset from the `ade4` package
 
 ```{r}
 # note, please do not print the dataset when submitting
-install.packages("ade4")
-require("ade4")
+#install.packages("ade4", repos = "http://cran.us.r-project.org")
+#require("ade4")
 data(doubs)
 
-install.packages("indicspecies")
-require("indicspecies")
 ```
 ## 3) HYPOTHESIS TESTING
 
@@ -70,6 +78,8 @@ In the code chunk below, test the hypothesis that fish community composition var
 2. use the multivariate analyses for categorical predictors to describe how fish community structure relates to habitat quality.
 
 ```{r}
+install.packages("vegan", repos = "http://cran.us.r-project.org")
+require("vegan")
 fish <- doubs$fish
 fish <- fish[-8, ]
 
@@ -240,18 +250,15 @@ mtext("Variation Partitioning of\nDoubs Fish Diversity", side = 3, line = -3)
 Based on your previous analyses with this data set, what are your thoughts about the importance of stochastic vs. deterministic factors on estimates of biodiversity?
 ```{r}
 getwd()
-setwd("~/GitHub/QB2019_Phillips/2.Worksheets/6.DiversitySampling")
+
 jellybeanpops <- read.table("JellyBeans.txt", sep = "\t", header = TRUE)
 jellybeansource <- read.table("JellyBeans.Source.txt", sep="\t", header = TRUE)
+jellybeancategory<-jellybeanpops$Group
+jellybeanpops<-jellybeanpops[,3:30]
 
 
-jellybeanpops <- jellybeanpops[1:9, 3:30]
-jellybeanA <- c(1, 2, 3, 6, 8)
-jellybeanB <- c(4, 5, 7, 9)
-jellybeanA <-as.matrix(jellybeanpops[jellybeanA, 1:28])
-jellybeanB <-as.matrix(jellybeanpops[jellybeanB, 1:28])
 
-adonis(jellybeanA ~ jellybeanB, method = "bray", permutations = 999)
+adonis(jellybeanpops ~ jellybeancategory, method = "bray", permutations = 999)
 ```
 > ***ANSWER***: Stochastic models are a lot more complicated, but they do factor in the randomness that we see when we're working with natural populations. We can't predict everything, which makes deterministic models a little less accurate. However, they are simpler and give us a good idea. I think deterministic models are good for a snapshot view of what's going on in a population or between populations, but if you need a better understanding of the variation that could/does exist with the communities, or if you need to be sure you're accounting for all possible situations (like with policy decisions or something), stochastic is probably the way to go. 
 
@@ -262,13 +269,24 @@ Use a statistic to test one of these hypotheses.
 Succinctly explain the finding and its relevance to your system.
 
 ```{r}
-install.packages("OTUtable")
-require("OTUtable")
+#require("vegan")
+#install.packages("OTUtable", repos = "http://cran.us.r-project.org")
+#require("OTUtable")
+require("viridis")
+bog_loc <- read.table("NTL_MO_bogs_location.txt", header = TRUE, sep = "\t", row.names = 1)
+data(otu_table)
+str(otu_table, max.level=0)
+first <- c("E01JUL07", "E02JUL07", "E03JUL07", "E04JUL07")
+otu_JUL07 <- otu_table[,grep(paste(first, collapse = "|"), colnames(otu_table))]
+CB <- c("CB", "JUL")
+otu_CB <- otu_table[,grep(CB, colnames(otu_table))]
+print(colnames(otu_JUL07))
+print(colnames(otu_CB))
+otu_JUL07 <- as.data.frame(t(otu_JUL07))
+
 otu_JUL07.db <- vegdist(otu_JUL07, method = "bray", upper = TRUE, diag = TRUE)
 order <- rev(attr(otu_JUL07.db, "Labels"))
 levelplot(as.matrix(otu_JUL07.db)[, order], aspect = "iso", col.regions = inferno, xlab = "Bog site", ylab = "Bog site", scales = list(cex = 0.5), main = "Bray-Curtis Distance")
-
-data(otu_table)
 
 #CBE27JUN07 and MAE27JUN07
 
