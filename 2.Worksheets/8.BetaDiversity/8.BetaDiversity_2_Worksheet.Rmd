@@ -1,6 +1,6 @@
 ---
 title: '8\. Worksheet: Among Site (Beta) Diversity -- Part 2'
-author: "Student Name; Z620: Quantitative Biodiversity, Indiana University"
+author: "Andrea Phillips; Z620: Quantitative Biodiversity, Indiana University"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: pdf_document
 geometry: margin=2.54cm
@@ -40,10 +40,20 @@ In the R code chunk below, provide the code to:
 4. load the `vegan` R package (be sure to install if needed).  
 
 ```{r}
-
-
-
-
+#rm(list = ls())
+getwd()
+install.packages("vegan", repos = "http://cran.us.r-project.org")
+require("vegan")
+#install.packages("OTUtable", repos = "http://cran.us.r-project.org")
+require("OTUtable")
+#install.packages("ade4", repos = "http://cran.us.r-project.org")
+require("ade4")
+#install.packages("indicspecies", repos = "http://cran.us.r-project.org")
+require("indicspecies")
+require("tidyverse")
+require("vegan")
+require("ggplot2")
+require("OTUtable")
 ```
 
 ## 2) LOADING DATA
@@ -51,9 +61,10 @@ In the R code chunk below, provide the code to:
 In the R code chunk below, load the `doubs` dataset from the `ade4` package
 
 ```{r}
-# note, pleae do not print the dataset when submitting
-
-
+# note, please do not print the dataset when submitting
+#install.packages("ade4", repos = "http://cran.us.r-project.org")
+#require("ade4")
+data(doubs)
 
 ```
 ## 3) HYPOTHESIS TESTING
@@ -67,21 +78,27 @@ In the code chunk below, test the hypothesis that fish community composition var
 2. use the multivariate analyses for categorical predictors to describe how fish community structure relates to habitat quality.
 
 ```{r}
+install.packages("vegan", repos = "http://cran.us.r-project.org")
+require("vegan")
+fish <- doubs$fish
+fish <- fish[-8, ]
 
+quality <- c(rep("HQ", 13), rep("MQ", 5), rep("LQ", 6), rep("MQ", 5))
 
+adonis(fish ~ quality, method = "bray", permutations = 999)
 
+indval <- multipatt(fish, cluster = quality, func = "IndVal.g", control = how(nperm=999))
+summary(indval)
 
-
-
-
-
-
+fish.rel <- decostand(fish, metho = "total")
+phi <- multipatt(fish.rel, cluster = quality, func = "r.g", control = how(nperm=999))
+summary(phi)
 ```
 
 ***Question 1***: Based on the PERMANOVA, IndVal, and phi coefficient analyses, what did you learn about the relationship between habitat quality and the fish species composition?
 Are the different analyses consistent with one another and do they agree with the visualizations (heat maps, cluster dendograms, ordinations) that you created?
 
-> ***Answer 1***: 
+> ***Answer 1***: The PERMANOVA indicates that habitat quality and species composition are highly correlated, with a p-value of .001, and about 45% of the variation in one explained by the variation in the other. IndVal has varying significance depending on the species--some species have a p-value that rises to around .02, which is still considered significant. Most species show high correlation with habitat quality according to IndVal, however. Phi coefficient follows this pattern, with habitat quality and fish species correlated. I would say that this does agree with our previous visualizations--the patterns we saw point to certain quality indicator species, which in and of itself implies that habitat quality is going to make a difference when it comes to species composition. 
 
 
 ### B.  Multivariate Procedures for Continuous Designs
@@ -93,17 +110,22 @@ In the R code chunk below, do the following:
 2. use a Mantel test to test the hypothesis that fish assemblages are correlated with stream environmental variables.
 
 ```{r}
+fish.db <- vegdist(fish, method = "bray", diag = TRUE)
+fish.dist <- vegdist(doubs$fish[-8, ], method = "bray")
+env.dist <- vegdist(scale(doubs$env[-8, ]), method = "euclid")
 
+mantel(fish.dist, env.dist)
 
+env.chem <- as.matrix(doubs$env[-8 , 5:11])
 
-
-
+doubs.dbrda <- dbrda(fish.db ~ ., as.data.frame(env.chem))
+ordiplot(doubs.dbrda)
 ```
 
 ***Question 2***: What do the results from our Mantel test suggest about fish diversity and stream environmental conditions? 
 How does this relate to your hypothesis about stream quality influencing fish communities?
 
-> ***Answer 2***:  
+> ***Answer 2***:  Once again, with a p-value of .001, the Mantel test shows that stream quality and fish species diversity are highly correlated, supporting my previous hypothesis. Specifically, about half the species are negatively correlated with har and nit, and the other half negatively correlated with oxy and pH. The remaining environmental indicators are mostly negatively correlated with species diversity. 
 
 ### ii.  Constrained Ordination
 In the R code chunk below, do the following:  
@@ -116,30 +138,60 @@ In the R code chunk below, do the following:
 6. plot the constrained ordination results including labeled points for each site, and
 7. add vectors that demonstrate the influence of each environmental factor the constrained ordination.   
 ```{r}
+doubs.dbrda.mod0 <- dbrda(fish.db ~ 1, as.data.frame(env.chem))
 
+ordiplot(doubs.dbrda.mod0)
 
+doubs.dbrda.mod1 <- dbrda(fish.db ~ ., as.data.frame(env.chem))
 
+doubs.dbrda <- ordiR2step(doubs.dbrda.mod0, doubs.dbrda.mod1, perm.max = 200)
 
+doubs.dbrda$call
+doubs.dbrda$anova
+ordiplot(doubs.dbrda)
+```
 
+```{r}
 
+permutest(doubs.dbrda, permutations = 999)
+envfit(doubs.dbrda, env.chem[,c(4,6,7)], perm = 999)
+dbrda.explainvar1 <- round(doubs.dbrda$CCA$eig[1] /
+                             sum(c(doubs.dbrda$CCA$eig)), 3) * 100
+dbrda.explainvar2 <- round(doubs.dbrda$CCA$eig[2] /
+                             sum(c(doubs.dbrda$CCA$eig, doubs.dbrda$CA$eig)), 3) * 100
 
+par(mar = c(5, 5, 4, 4) + 0.1)
 
+plot(scores(doubs.dbrda, display = "wa"), xlim = c(-1.3, 1.1), ylim = c(-1.1, 2.7),
+     xlab = paste("dbRDA 1 (", dbrda.explainvar1, "%)", sep = ""), 
+     ylab = paste("dbRDA 2 (", dbrda.explainvar2, "%)", sep = ""), 
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
 
+axis(side = 1, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
 
+points(scores(doubs.dbrda, display = "wa"), 
+       pch = 19, cex = 3, bg = "gray", col = "gray")
+text(scores(doubs.dbrda, display = "wa"),
+     labels = row.names(scores(doubs.dbrda, display = "wa")))
 
+vectors <- scores(doubs.dbrda, display = "bp")
 
-
-
-
-
-
-
-
+arrows(0, 0, vectors[, 1], vectors[, 2], 
+       lwd = 2, lty = 1, length = 0.2, col = "red")
+text(vectors[,1], vectors[, 2], pos = 3, 
+     labels = row.names(vectors))
+axis(side = 3, lwd.ticks=2, cex.axis=1.2, las = 1, col = "red", lwd = 2.2, 
+     at = pretty(range(vectors[, 1])) * 2, labels = pretty(range(vectors[, 1])))
+axis(side = 4, lwd.ticks=2, cex.axis=1.2, las = 1, col = "red", lwd = 2.2, 
+     at = pretty(range(vectors[, 2])) * 2, labels = pretty(range(vectors[ ,2])))
 ```
 
 ***Question 3***: Based on the constrained ordination, what are the environmental variables (or groups of correlated variables) that seem to be contributing to variation in fish community structure?
 
-> ***Answer 3***: 
+> ***Answer 3***: It appears that bdo and nit are contributing most to variation in fish community structure--they follow those sites that vary most from the composition of the majority of sites, bdo more so than nit. 
 
 ### iii. Variation Partitioning
 In the code chunk below,   
@@ -151,23 +203,64 @@ In the code chunk below,
 5. Partition the variation among sites into the relative importance of space, environment, spatially structured environment, and residuals,
 6. Plot the variation partitioning output to visualize it.  
 ```{r}
+doubs.dbrda$anova
+env.mod <- model.matrix(~ oxy + bdo + nit, as.data.frame(env.chem))[,-1]
 
+rs <- rowSums(fish)/sum(fish)
+doubs.pcnmw <- pcnm(dist(doubs$xy[-8,]), w = rs, dist.ret = T)
+doubs.pcnmw$values > 0
 
+doubs.space <- as.data.frame(scores(doubs.pcnmw))
+doubs.pcnm.mod0 <- dbrda(fish.db ~ 1, doubs.space)
+doubs.pcnm.mod1 <- dbrda(fish.db ~ ., doubs.space)
+step.pcnm <- ordiR2step(doubs.pcnm.mod0, doubs.pcnm.mod1, perm.max = 200)
 
+plot(step.pcnm)
 
+step.pcnm$anova
 
+space.mod <- model.matrix(~ PCNM2 + PCNM3 + PCNM5 + PCNM1 +
+                            PCNM13 + PCNM16 + PCNM6, doubs.space)[,-1]
 
+doubs.total.env <- dbrda(fish.db ~ env.mod + Condition(space.mod))
+doubs.space.cond.env <- dbrda(fish.db ~ space.mod + Condition(env.mod))
 
+permutest(doubs.space.cond.env, permutations = 999)
+permutest(doubs.space.cond.env, permutations = 999)
+permutest(doubs.total.env, permutations = 999)
+permutest(doubs.total.env, permutations = 999)
+
+doubs.varpart <- varpart(fish.db, env.mod, space.mod)
+doubs.varpart
+
+par(mar = c(2,2,2,2))
+plot(doubs.varpart)
+text(1, 0.25, "Space")
+text(0, 0.25, "Env")
+mtext("Variation Partitioning of\nDoubs Fish Diversity", side = 3, line = -3)
 ```
 
 ***Question 4***: Interpret the variation partitioning results.   
 
-> ***Answer 4***: 
+> ***Answer 4***: I believe this is showing that 13% of the variation among sites is due to environmental variables, and 24% of the variation among sites is explained by distance between the sites. So, this doesn't necessarily support the earlier hypothesis that site quality is contributing a ton to fish diversity. Isn't this also saying that 37% of the variation is due to a combination of environmental variables and distance? So maybe quality does make a difference, but only as the site is also distant. 
 
 ## SYNTHESIS
 
 1) Using the jelly bean data from class (i.e., JellyBeans.txt), perform a PERMANOVA to test whether or not the vicariance event (random splitting of source community) had an affect on jelly bean composition.
 Based on your previous analyses with this data set, what are your thoughts about the importance of stochastic vs. deterministic factors on estimates of biodiversity?
+```{r}
+getwd()
+
+jellybeanpops <- read.table("JellyBeans.txt", sep = "\t", header = TRUE)
+jellybeansource <- read.table("JellyBeans.Source.txt", sep="\t", header = TRUE)
+jellybeancategory<-jellybeanpops$Group
+jellybeanpops<-jellybeanpops[,3:30]
+
+
+
+adonis(jellybeanpops ~ jellybeancategory, method = "bray", permutations = 999)
+```
+> ***ANSWER***: Stochastic models are a lot more complicated, but they do factor in the randomness that we see when we're working with natural populations. We can't predict everything, which makes deterministic models a little less accurate. However, they are simpler and give us a good idea. I think deterministic models are good for a snapshot view of what's going on in a population or between populations, but if you need a better understanding of the variation that could/does exist with the communities, or if you need to be sure you're accounting for all possible situations (like with policy decisions or something), stochastic is probably the way to go. 
 
 2) Load the dataset you are using for your Team Project. 
 Perform an ordination to visualize your dataset.
@@ -175,3 +268,32 @@ Using this ordination, develop some hypotheses relevant to $\beta$-diversity.
 Use a statistic to test one of these hypotheses.
 Succinctly explain the finding and its relevance to your system.
 
+```{r}
+#require("vegan")
+#install.packages("OTUtable", repos = "http://cran.us.r-project.org")
+#require("OTUtable")
+require("viridis")
+bog_loc <- read.table("NTL_MO_bogs_location.txt", header = TRUE, sep = "\t", row.names = 1)
+data(otu_table)
+str(otu_table, max.level=0)
+first <- c("E01JUL07", "E02JUL07", "E03JUL07", "E04JUL07")
+otu_JUL07 <- otu_table[,grep(paste(first, collapse = "|"), colnames(otu_table))]
+CB <- c("CB", "JUL")
+otu_CB <- otu_table[,grep(CB, colnames(otu_table))]
+print(colnames(otu_JUL07))
+print(colnames(otu_CB))
+otu_JUL07 <- as.data.frame(t(otu_JUL07))
+
+otu_JUL07.db <- vegdist(otu_JUL07, method = "bray", upper = TRUE, diag = TRUE)
+order <- rev(attr(otu_JUL07.db, "Labels"))
+levelplot(as.matrix(otu_JUL07.db)[, order], aspect = "iso", col.regions = inferno, xlab = "Bog site", ylab = "Bog site", scales = list(cex = 0.5), main = "Bray-Curtis Distance")
+
+#CBE27JUN07 and MAE27JUN07
+
+(cor(otu_table[[80]], otu_table[[444]]))^2
+
+#CBE01OCT07 and MAE01OCT07
+
+(cor(otu_table[[24]], otu_table[[372]]))^2
+```
+> ***ANSWER***: Based on the Bray-curtis Distance matrix above, (and considering our map of the bog placement, not shown here), I would hypothesize that distance impacts the similarity of the species composition between bogs, specifically that as bogs get further apart, their species composition differs more. The statistic I can use to quickly test this hypothesis are simple r^2 calculations, to see how much of the variation between bogs is explained by distance between them. Looking at Crystal Bog and Mary Lake, two of the most distant bogs, I can calculate r^2 between the values. This calculation results in a value of 0.4 for the bogs on June 27 of the same year, and of .09 for the bogs on October first later that year. This supports my hypothesis that distance is correlated with difference in species composition. 

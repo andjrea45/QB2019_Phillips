@@ -366,3 +366,113 @@ plot(jelly.ward, main = "Jellybeans B: Ward's Clustering",
 #a bit from 4 and 5. In sample A, 1 and 6 are a bit different from group 2, 
 #which collectively vary from samples 3 and 8, which are very similar to each other. 
 ```
+
+
+```{r}
+install.packages("vegan")
+require("vegan")
+
+quality <- c(rep("HQ", 13), rep("MQ", 5), rep("LQ", 6), rep("MQ", 5))
+
+adonis(fish- quality, method = "bray", permutations = 999)
+
+indval <- multipatt(fish, cluster = quality, func = "IndVal.g", control = how(nperm=999))
+summary(indval)
+
+fish.rel <- decostand(fish, metho = "total")
+phi <- multipatt(fish.rel, cluster = quality, func = "r.g", control = how(nperm=999))
+summary(phi)
+
+fish.dist <- vegdist(doubs$fish[-8, ], method = "bray")
+env.dist <- vegdist(scale(doubs$env[-8, ]), method = "euclid")
+
+mantel(fish.dist, env.dist)
+
+env.chem <- as.matrix(doubs$env[-8 , 5:11])
+
+doubs.dbrda <- dbrda(fish.db ~ ., as.data.frame(env.chem))
+ordiplot(doubs.dbrda)
+
+doubs.dbra.mod0 <- dbrda(fish.db ~ 1, as.data.fram(env.chem))
+
+ordiplot(doubs.dbrda.mod0)
+
+doubs.dbrda.mod1 <- dbrda(fish.db ~ ., as.data.frame(env.chem))
+
+doubs.dbrda <- ordiR2step(doubs.dbrda.mod0, doubs.dbrda.mod1, perm.max = 200)
+
+doubs.dbrda$call
+doubs.dbrda$anova
+ordiplot(doubs.dbrda)
+
+permutest(doubs.dbrda, permutations = 999)
+envfit(doubs.dbrda, env.chem[,c(4,6,7)], perm = 999)
+dbrda.explainvar1 <- round(doubs.dbrda$CCA$eig[1] /
+                             sum(c(doubs.dbrda$CCA$eig)), 3) * 100
+dbrda.explainvar2 <- round(doubs.dbrda$CCA$eig[2] /
+                             sum(c(doubs.dbrda$CCA$eig, doubs.dbrda$CA$eig)), 3) * 100
+
+par(mar = c(5, 5, 4, 4) + 0.1)
+
+plot(scores(doubs.dbrda, display = "wa"), xlim = c(-1.3, 1.1), ylim = c(-1.1, 2.7),
+     xlab = paste("dbRDA 1 (", dbrda.explainvar1, "%)", sep = ""), 
+     ylab = paste("dbRDA 2 (", dbrda.explainvar2, "%)", sep = ""), 
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
+
+axis(side = 1, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+
+points(scores(doubs.dbrda, display = "wa"), 
+       pch = 19, cex = 3, bg = "gray", col = "gray")
+text(scores(doubs.dbrda, display = "wa"),
+     labels = row.names(scores(doubs.dbrda, display = "wa")))
+
+vectors <- scores(doubs.dbrda, display = "bp")
+
+arrows(0, 0, vector[,1], vectors[, 2], 
+       lwd = 2, lty = 1, length = 0.2, col = "red")
+text(vectors[,1], vectors[, 2], pos = 3, 
+     labels = row.names(vectors))
+axis(side = 3, lwd.ticks=2, cex.axis=1.2, las = 1, col = "red", lwd = 2.2, 
+     at = pretty(range(vectors[, 1])) * 2, labels = pretty(range(vectors[, 1])))
+axis(side = 4, lwd.ticks=2, cex.axis=1.2, las = 1, col = "red", lwd = 2.2, 
+     at = pretty(range(vectors[, 2])) * 2, labels = pretty(range(vectors[ ,2])))
+
+doubs.dbrda$anova
+env.mod <- model.matrix(~ oxy + bdo + nit, as.data.frame(env.chem))[,-1]
+
+rs <- rowSums(fish)/sum(fish)
+doubs.pcnmw <- pcnm(dist(doubs$xy[-8,]), w = rs, dist.ret = T)
+doubs.pcnmw$values > 0
+
+doubs.space <- as.data.frame(scores(doubs.pcnmw))
+doubs.pcnm.mod0 <- dbrda(fish.db ~ 1, doubs.space)
+doubs.pcnm.mod1 <- ordiR2step(doubs.pcnm.mod0, doubs.pcnm.mod1, perm.max = 200)
+
+plot(step.pcnm)
+
+step.pcnm$anova
+
+space.mod <- model.matrix(~ PCNM2 + PCNM3 + PCNM5 + PCNM1 +
+                            PCNM13 + PCNM16 + PCNM6 + doubs.space)[,-1]
+
+doubs.total.env <- dbrda(fish.db ~ env.mod + Condition(space.mod))
+doubs.space.cond.env <- dbrda(fish.db ~ space.mod + Condition(env.mod))
+
+permutest(doubs.env.cond.space, permutations = 999)
+permutest(doubs.space.cond.env, permutations = 999)
+permutest(doubs.total.env, permutations = 999)
+permutest(doubs.total.space, permutations = 999)
+
+doubs.varpart <- varpart(fish.db, env.mod, space.mod)
+doubs.varpart
+
+par(mar = c(2,2,2,2))
+plot(doubs.varpart)
+text(1, 0.25, "Space")
+text(0, 0.25, "Env")
+mtext("Variation Partitioning of\nDoubs Fish Diversity", side = 3, line = -3)
+
+```
