@@ -297,3 +297,202 @@ levelplot(as.matrix(otu_JUL07.db)[, order], aspect = "iso", col.regions = infern
 (cor(otu_table[[24]], otu_table[[372]]))^2
 ```
 > ***ANSWER***: Based on the Bray-curtis Distance matrix above, (and considering our map of the bog placement, not shown here), I would hypothesize that distance impacts the similarity of the species composition between bogs, specifically that as bogs get further apart, their species composition differs more. The statistic I can use to quickly test this hypothesis are simple r^2 calculations, to see how much of the variation between bogs is explained by distance between them. Looking at Crystal Bog and Mary Lake, two of the most distant bogs, I can calculate r^2 between the values. This calculation results in a value of 0.4 for the bogs on June 27 of the same year, and of .09 for the bogs on October first later that year. This supports my hypothesis that distance is correlated with difference in species composition. 
+
+
+
+
+
+
+```{r}
+rm(list = ls())
+getwd()
+
+package.list <- c('ape', 'seqinr', 'phylobase', 'adephylo', 'geiger', 'picante', 'stats', 'RColorBrew')
+for (package in package.list) {
+  if (!require(package, character.only = TRUE, quietly = TRUE)) {
+    install.packages(package)
+    library(package, character.only = TRUE)
+  }
+}
+
+muscle -in ./data/p.isolates.fasta -out ./data/p.isolates.afa
+
+read.aln <- read.alignment(file = "./data/p.isolates.afa", format = "fasta")
+
+p.DNAbin <- as.DNAbin(read.aln)
+
+window <- p.DNAbin[, 100:500]
+
+image.DNAbin(window, cex.lab = 0.50)
+
+seq.dist.raw <- dist.dna(p.DNAbin, model = "raw", pairwise.deletion = FALSE)
+
+nj.tree <- bionj(seq.dist.raw)
+outgroup <- match("Methanosarcina", nj.tree$tip.label)
+nj.rooted <- root(nj.tree, outgroup, resolve.root = TRUE)
+par(mar = c(1,1,2,1) + 0.1)
+plot.phylo(nj.rooted, main = "Neighbor Joining Tree", "phylogram", use.edge.length = FALSE,
+           direction = "right", cex = 0.6, label.offset = 1)
+add.scale.bar(cex = 0.7)
+
+seq.dist.F84 <- dist.dna(p.DNAbin, model = "F84", pairwise.deletion = FALSE)
+
+par(mar = c(5, 5, 2, 1) + 0.1)
+plot(seq.dist.raw, seq.dist.F84,
+     pch = 20, col = "red", las = 1, asp = 1, xlim = c(0, 0.7), ylim = c(0, 0.7), 
+     xlab = "Raw Distance", ylab = "F84 Distance") 
+abline(b = 1, a = 0, lty = 2)
+text(0.65, 0.6, "1:1")
+
+raw.tree <-bionj(seq.dist.raw)
+F84.tree <- bionj(seq.dist.F84)
+raw.outgroup <- match("Methanosarcina", raw.tree$tip.label)
+F84.outgroup <- match("Methanosarcina", F84.tree$tip.label)
+raw.rooted <- root(raw.tree, raw.outgroup, resolve.root = TRUE)
+F84.rooted <- root(F84.tree, F84.outgroup, resolve.root = TRUE)
+layout(matrix(c(1,2), 1, 2), width = c(1, 1))
+par(mar = c(1, 1, 2, 0))
+plot.phylo(raw.rooted, type = "phylogram", direction = "right", show.tip.label = TRUE,
+           use.edge.length = FALSE, adj = 0.5, cex = 0.6, label.offset = 2, main = "Raw")
+par(mar = c(1, 0, 2, 1))
+plot.phylo(F84.rooted, type = "phylogram", direction = "left", show.tip.label = TRUE,
+           use.edge.length = FALSE, adj = 0.5, cex = 0.6, label.offset = 2, main = "F84")
+
+
+dist.topo(raw.rooted, F84.rooted, method = "score")
+
+p.DNAbin.phyDat <- read.phyDat("./data/p.isolates.afa", format = "fasta", type = "DNA")
+fit <- pml(nj.rooted, data = p.DNAbin.phyDat)
+fitJC <- optim.pml(fit, TRUE)
+fitGTR <- optim.pml(fitGTR, model = "GTR", optInv = TRUE, optGamma = TRUE)
+anova(fitJC, fitGTR)
+AIC(fitJC)
+AIC(fitGTR)
+bs = bootstrap.pml(fitJC, bs = 100, optNni = TRUE,
+                   control = pmlcontrol(trace = 0))
+
+ml.bootstrap <- read.tree("./data/ml_tree/RAxML_bipartitions.T1")
+par(mar = c(1,1,2,1) + 0.1)
+plot.phylo(ml.bootstrap, type = "phylogram", irection = "right", show.tip.label = TRUE,
+           use.edge.length = FALSE, cex = 0.6, label.offset = 1, main = "Maximum Likelihood with Support") 
+add.scale.bar(cex = 0.7)
+nodelabels(ml.bootstrap$node.label, font = 2, bg = "white", frame = "r", cex = 0.5)
+
+
+p.growth <- read.table("./data/p.isolates.raw.growth.txt", sep = "\t", header = TRUE,
+                       row.names = 1)
+p.growth.std <- p.growth / (apply(p.growth, 1, sum))
+
+umax <- (apply(p.growth, 1, max))
+levins <- function(p_xi = ""){
+  p = 0
+  for (i in p_xi){
+    p = p + i^2
+  }
+  nb = 1 / (length(p_xi) * p)
+  return(nb)
+}
+
+nb <- as.matrix(levins(p.growth.std))
+rownames(nb) <- row.names(p.growth)
+colnames(nb) <- c("NB")
+
+nj.tree <- bionj(seq.dist.F84)
+outgroup <- match("Methanosarcina", nj.tree$tip.label)
+nj.rooted <-(nj.tree, outgroup, resolve.root = TRUE)
+nj.rooted <- drop.tip(nj.rooted, "Methanosarcina")
+mypalette <- colorRampPalette(brewer.pal(9, "YlOrRd"))
+par(mar = c(1,1,1,1) + 0.1)
+x <- phylo4d(nj.rooted, p.growth.std)
+table.phylo4d(x, treetype = "phylo", symbol = "colors", show.node = TRUE,
+              cex.label = 0.5, scale = FALSE, use.edge.length = FALSE,
+              edge.color = "black", edge.width = 2, box = FALSE,
+              col = mypalette(25), pch = 15, cex.symbol = 1.25,
+              ratio.tree = 0.5, cex.legend = 1.5, center = FALSE)
+
+
+par(mar = c(1,5,1,5) + 0.1)
+x.nb <- phylo4d(nj.rooted, nb)
+table.phylo4d(x.nb, treetype = "phylo", symbol = "colors", show.node = TRUE,
+              cex.label = 0.5, scale = FALSE, use.edge.legth = FALSE,
+              edge.color = "black", edge.width = 2, box = FALSE,
+              col=mypalette(25), pch = 15, cex.symbol = 1.25, var.label = ("NB"), 
+              ratio.tree = 0.90, cex.legend = 1.5, center = FALSE)
+
+nj.lambda.5 <- rescale(nj.rooted, "lambda", 0.5)
+nj.lambda.0 <- rescale(nj.rooted, "lambda", 0)
+layout(matrix(c(1,2,3), 1, 3), with = c(1, 1, 1))
+par(mar = c(1,0.5,2,0.5) + 0.1)
+plot(nj.rooted, main = "lambda = 1", cex = 0.7, adj = 0.5)
+plot(nj.lambda.5, main = "lamba = 0.5", cex = 0.7, adj = 0.5)
+plot(nj.lambda.0, main = "lamba = 0", cex = 0.7, adj = 0.5)
+
+fitContinuous(nj.rooted, nb, model = "lambda")
+fitContinuous(nj.lambda.0, nb, model = "lambda")
+
+nj.rooted$edge.length <- nj.rooted$edge.length + 10^-7
+p.phylosignal <- matrix(NA, 6, 18)
+colnames(p.phylosignal) <- colnames(p.growth.std)
+rownames(p.phylosignal) <- c("K", "PIC.var.obs", "PIC.var.mean",
+                             "PIC.var.P", "PIC.var.z", "PIC.P.BH")
+for (i in 1:18){
+  x <- as.matrix(p.growth.std[ ,i, drop = FALSE])
+  out <- phylosignal(x, nj.rooted)
+  p.phylosignal[1:5, i] <- round(t(out), 3)
+}
+p.phylosignal[6, ] <- round(p.adjust(p.phylosignal[4, ], method = "BH"), 3)
+signal.nb <- phylosignal(nb, nj.rooted)
+signal.nb
+
+p.growth.pa <- as.data.frame((p.growth > 0.01) * 1)
+apply(p.growth.pa, 2, sum)
+p.growth.pa$name <- rownames(p.growth.pa)
+
+p.traits <- comparative.data(nj.rooted, p.growth.pa, "name")
+phylo.d(p.traits, binvar = AEP)
+phylo.d(p.traits, binvar = PhenylCP)
+phylo.d(p.traits, binvar = DNA)
+phylo.d(p.traits, binvar = cAMP)
+
+is.ultrametric(nj.rooted)
+nj.rooted.um <- chronos(nj.rooted)
+out <- pmc(nj.rooted.um, nb, "BM", "OU", nboot = 100)
+
+dist <- data.frame(null = out$null, test = out$test)
+colnames(dists) <- c("BM", "OU")
+png("./figs/H_test.png", width = 480, height = 240, res = 120)
+dists %>%
+  gather(model, value) %>%
+  ggplot(aes(value, fill = model)) +
+  geom_density(alpha = 0.5) +
+  geom_vline(xintercept = out$lr) +
+  xlab(expression(delta)) +
+  theme(panel.background = element_blank())
+dev.off()
+
+length(dists$BM[dists$BM > out$lr]) / length(dists$BM)
+
+
+mammal.Tree <- read.tree("./data/mammal_best_super_tree_fritz2009.tre")
+mammal.data <- read.table("./data/mammal_BMR.txt", sep = "\t", header = TRUE)
+mammal.data <- mammal.data[,c("Species", "BMR_.m102.hour.", "Body_mass_for_BMR_.gr.")]
+mammal.species <- array(mammal.data$Species)
+pruned.mammal.tree <- drop.tip(mammal.Tree, mammal.Tree$tip.label[-na.omit(math(mammal.species, mammal))])
+pruned.mammal.data <- mammal.data[mammal.data$Species %in% pruned.mammal.tree$tip.label,]
+rownames(pruned.mammal.data) <- pruned.mammal.data$Species
+
+fit <- lm(log10(BMR_.m102.hour.) ~ log10(Body_mass_for_BMR_.gr.), data = pruned.mammal.data)
+plot(log10(pruned.mammal.data$Body_mass_for_BMR_.gr.), log10(pruned.mammal.data$BMR_.m102.hour.), la)
+abline(a = fit$coefficients[1], b = fit4coefficients[2])
+b1 <- round(fit$coefficients[2],3)
+eqn <- bquote(italic(z) == .(b1))
+text(0.5, 4.5, eqn, pos = 4)
+
+fit.phy <- phylolm(log10(MR_.m102.hour.) ~ log10(Body_mass_for_BMR_.gr.), data = pruned.mammal.data,
+                   pruned.mammmal.tree, model = 'lambda', boot = 0)
+plot(log10(pruned.mammal.data$Body_mass_for_BMR_.gr.), log10(pruned.mammal.data$BMR_.m102.hour.), las)
+abline(a = fit.phy$coefficients[1], b = fit.phy$coefficients[2])
+b1.phy <- round(fit.phy$coefficients[2],3)
+eqn <-bquote(italic(z) == .(b1.phy))
+text(0.5, 4.5, eqn, pos = 4)
+```
