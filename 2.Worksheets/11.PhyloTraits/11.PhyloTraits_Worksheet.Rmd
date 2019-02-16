@@ -1,6 +1,6 @@
 ---
 title: '11\. Worksheet: Phylogenetic Diversity - Traits'
-author: "Student Name; Z620: Quantitative Biodiversity, Indiana University"
+author: "Andrea Phillips; Z620: Quantitative Biodiversity, Indiana University"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: pdf_document
 geometry: margin=2.54cm
@@ -48,8 +48,7 @@ In the R code chunk below, provide the code to:
 ```{r}
 rm(list = ls())
 getwd()
-setwd("~/GitHub/QB-2019/2.Worksheets/11.PhyloTraits")
-
+#setwd("~/GitHub/QB-2019/2.Worksheets/11.PhyloTraits")
 ```
 
 ## 2) DESCRIPTION OF DATA
@@ -79,7 +78,26 @@ for (package in package.list) {
     library(package, character.only=TRUE)
   }
 }
+#muscle -in ./data/p.isolates.fasta -out ./data/p.isolates.afa
 
+read.aln <- read.alignment(file = "./data/p.isolates.afa", format = "fasta")
+
+p.DNAbin <- as.DNAbin(read.aln)
+
+window <- p.DNAbin[, 100:500]
+
+image.DNAbin(window, cex.lab = 0.50)
+
+seq.dist.raw <- dist.dna(p.DNAbin, model = "raw", pairwise.deletion = FALSE)
+
+nj.tree <- bionj(seq.dist.raw)
+outgroup <- match("Methanosarcina", nj.tree$tip.label)
+nj.rooted <- root(nj.tree, outgroup, resolve.root = TRUE)
+par(mar = c(1,1,2,1) + 0.1)
+plot.phylo(nj.rooted, main = "Neighbor Joining Tree", "phylogram", use.edge.length = FALSE,
+           direction = "right", cex = 0.6, label.offset = 1)
+add.scale.bar(cex = 0.7)
+grid(ncol(window), nrow(window), col = "lightgrey")
 ```
 
 ***Question 2***:  Make some observations about the `muscle` alignment of the 16S rRNA gene sequences for our bacterial isolates and the outgroup, *Methanosarcina*, a member of the domain Archaea. 
@@ -106,6 +124,28 @@ In the R code chunk below, do the following:
 
 ```{r}
 
+seq.dist.F84 <- dist.dna(p.DNAbin, model = "F84", pairwise.deletion = FALSE)
+
+par(mar = c(5, 5, 2, 1) + 0.1)
+plot(seq.dist.raw, seq.dist.F84,
+     pch = 20, col = "red", las = 1, asp = 1, xlim = c(0, 0.7), ylim = c(0, 0.7), 
+     xlab = "Raw Distance", ylab = "F84 Distance") 
+abline(b = 1, a = 0, lty = 2)
+text(0.65, 0.6, "1:1")
+
+raw.tree <-bionj(seq.dist.raw)
+F84.tree <- bionj(seq.dist.F84)
+raw.outgroup <- match("Methanosarcina", raw.tree$tip.label)
+F84.outgroup <- match("Methanosarcina", F84.tree$tip.label)
+raw.rooted <- root(raw.tree, raw.outgroup, resolve.root = TRUE)
+F84.rooted <- root(F84.tree, F84.outgroup, resolve.root = TRUE)
+layout(matrix(c(1,2), 1, 2), width = c(1, 1))
+par(mar = c(1, 1, 2, 0))
+plot.phylo(raw.rooted, type = "phylogram", direction = "right", show.tip.label = TRUE,
+           use.edge.length = FALSE, adj = 0.5, cex = 0.6, label.offset = 2, main = "Raw")
+par(mar = c(1, 0, 2, 1))
+plot.phylo(F84.rooted, type = "phylogram", direction = "left", show.tip.label = TRUE,
+           use.edge.length = FALSE, adj = 0.5, cex = 0.6, label.offset = 2, main = "F84")
 
 ```
 
@@ -159,7 +199,23 @@ In the R code chunk below, do the following:
 2. Plot bootstrap support values onto the tree
 
 ```{r}
+dist.topo(raw.rooted, F84.rooted, method = "score")
 
+p.DNAbin.phyDat <- read.phyDat("./data/p.isolates.afa", format = "fasta", type = "DNA")
+fit <- pml(nj.rooted, data = p.DNAbin.phyDat)
+fitJC <- optim.pml(fit, TRUE)
+fitGTR <- optim.pml(fitGTR, model = "GTR", optInv = TRUE, optGamma = TRUE)
+anova(fitJC, fitGTR)
+AIC(fitJC)
+AIC(fitGTR)
+bs = bootstrap.pml(fitJC, bs = 100, optNni = TRUE,
+                   control = pmlcontrol(trace = 0))
+ml.bootstrap <- read.tree("./data/ml_tree/RAxML_bipartitions.T1")
+par(mar = c(1,1,2,1) + 0.1)
+plot.phylo(ml.bootstrap, type = "phylogram", irection = "right", show.tip.label = TRUE,
+           use.edge.length = FALSE, cex = 0.6, label.offset = 1, main = "Maximum Likelihood with Support") 
+add.scale.bar(cex = 0.7)
+nodelabels(ml.bootstrap$node.label, font = 2, bg = "white", frame = "r", cex = 0.5)
 
 ```
 
@@ -192,7 +248,9 @@ In the R code chunk below, do the following:
 2. standardize the data for each strain by the sum of growth rates.
 
 ```{r}
-
+p.growth <- read.table("./data/p.isolates.raw.growth.txt", sep = "\t", header = TRUE,
+                       row.names = 1)
+p.growth.std <- p.growth / (apply(p.growth, 1, sum))
 
 ```
 
@@ -204,7 +262,18 @@ In the R code chunk below, do the following:
 3. use this function to calculate *nb* for each isolate.
 
 ```{r}
-
+umax <- (apply(p.growth, 1, max))
+levins <- function(p_xi = ""){
+  p = 0
+  for (i in p_xi){
+    p = p + i^2
+  }
+  nb = 1 / (length(p_xi) * p)
+  return(nb)
+}
+nb <- as.matrix(levins(p.growth.std))
+rownames(nb) <- row.names(p.growth)
+colnames(nb) <- c("NB")
 
 ```  
 
@@ -216,7 +285,10 @@ In the R code chunk below, do the following:
 3. remove the outgroup branch.
 
 ```{r}
-
+nj.tree <- bionj(seq.dist.F84)
+outgroup <- match("Methanosarcina", nj.tree$tip.label)
+nj.rooted <-(nj.tree, outgroup, resolve.root = TRUE)
+nj.rooted <- drop.tip(nj.rooted, "Methanosarcina")
 
 ```
 
@@ -228,7 +300,21 @@ In the R code chunk below, do the following:
 
 
 ```{r}
-
+mypalette <- colorRampPalette(brewer.pal(9, "YlOrRd"))
+par(mar = c(1,1,1,1) + 0.1)
+x <- phylo4d(nj.rooted, p.growth.std)
+table.phylo4d(x, treetype = "phylo", symbol = "colors", show.node = TRUE,
+              cex.label = 0.5, scale = FALSE, use.edge.length = FALSE,
+              edge.color = "black", edge.width = 2, box = FALSE,
+              col = mypalette(25), pch = 15, cex.symbol = 1.25,
+              ratio.tree = 0.5, cex.legend = 1.5, center = FALSE)
+par(mar = c(1,5,1,5) + 0.1)
+x.nb <- phylo4d(nj.rooted, nb)
+table.phylo4d(x.nb, treetype = "phylo", symbol = "colors", show.node = TRUE,
+              cex.label = 0.5, scale = FALSE, use.edge.legth = FALSE,
+              edge.color = "black", edge.width = 2, box = FALSE,
+              col=mypalette(25), pch = 15, cex.symbol = 1.25, var.label = ("NB"), 
+              ratio.tree = 0.90, cex.legend = 1.5, center = FALSE)
 
 ```
 
@@ -251,6 +337,14 @@ In the R code chunk below, do the following:
 3. label and customize the trees as desired.
 
 ```{r}
+nj.lambda.5 <- rescale(nj.rooted, "lambda", 0.5)
+nj.lambda.0 <- rescale(nj.rooted, "lambda", 0)
+layout(matrix(c(1,2,3), 1, 3), with = c(1, 1, 1))
+par(mar = c(1,0.5,2,0.5) + 0.1)
+plot(nj.rooted, main = "lambda = 1", cex = 0.7, adj = 0.5)
+plot(nj.lambda.5, main = "lamba = 0.5", cex = 0.7, adj = 0.5)
+plot(nj.lambda.0, main = "lamba = 0", cex = 0.7, adj = 0.5)
+
 
 
 ```
@@ -259,7 +353,8 @@ In the R code chunk below, do the following:
 1. use the `fitContinuous()` function to compare your original tree to the transformed trees.
 
 ```{r}
-
+fitContinuous(nj.rooted, nb, model = "lambda")
+fitContinuous(nj.lambda.0, nb, model = "lambda")
 
 ```
 
@@ -281,7 +376,19 @@ In the R code chunk below, do the following:
 4. calculate Blomberg's K for niche breadth using the `phylosignal()` function.
 
 ```{r}
-
+nj.rooted$edge.length <- nj.rooted$edge.length + 10^-7
+p.phylosignal <- matrix(NA, 6, 18)
+colnames(p.phylosignal) <- colnames(p.growth.std)
+rownames(p.phylosignal) <- c("K", "PIC.var.obs", "PIC.var.mean",
+                             "PIC.var.P", "PIC.var.z", "PIC.P.BH")
+for (i in 1:18){
+  x <- as.matrix(p.growth.std[ ,i, drop = FALSE])
+  out <- phylosignal(x, nj.rooted)
+  p.phylosignal[1:5, i] <- round(t(out), 3)
+}
+p.phylosignal[6, ] <- round(p.adjust(p.phylosignal[4, ], method = "BH"), 3)
+signal.nb <- phylosignal(nb, nj.rooted)
+signal.nb
 
 ```
 
@@ -302,7 +409,15 @@ In the R code chunk below, do the following:
 4. use `phylo.d()` to calculate *D* on at least three phosphorus traits.
 
 ```{r}
+p.growth.pa <- as.data.frame((p.growth > 0.01) * 1)
+apply(p.growth.pa, 2, sum)
+p.growth.pa$name <- rownames(p.growth.pa)
 
+p.traits <- comparative.data(nj.rooted, p.growth.pa, "name")
+phylo.d(p.traits, binvar = AEP)
+phylo.d(p.traits, binvar = PhenylCP)
+phylo.d(p.traits, binvar = DNA)
+phylo.d(p.traits, binvar = cAMP)
 
 ```
 
@@ -324,7 +439,28 @@ In the R code chunk below, do the following:
 2. Fit a phylogenetic regression to the trait dataset, taking into account the mammal supertree
 
 ```{r}
+mammal.Tree <- read.tree("./data/mammal_best_super_tree_fritz2009.tre")
+mammal.data <- read.table("./data/mammal_BMR.txt", sep = "\t", header = TRUE)
+mammal.data <- mammal.data[,c("Species", "BMR_.m102.hour.", "Body_mass_for_BMR_.gr.")]
+mammal.species <- array(mammal.data$Species)
+pruned.mammal.tree <- drop.tip(mammal.Tree, mammal.Tree$tip.label[-na.omit(math(mammal.species, mammal))])
+pruned.mammal.data <- mammal.data[mammal.data$Species %in% pruned.mammal.tree$tip.label,]
+rownames(pruned.mammal.data) <- pruned.mammal.data$Species
 
+fit <- lm(log10(BMR_.m102.hour.) ~ log10(Body_mass_for_BMR_.gr.), data = pruned.mammal.data)
+plot(log10(pruned.mammal.data$Body_mass_for_BMR_.gr.), log10(pruned.mammal.data$BMR_.m102.hour.), la)
+abline(a = fit$coefficients[1], b = fit4coefficients[2])
+b1 <- round(fit$coefficients[2],3)
+eqn <- bquote(italic(z) == .(b1))
+text(0.5, 4.5, eqn, pos = 4)
+
+fit.phy <- phylolm(log10(MR_.m102.hour.) ~ log10(Body_mass_for_BMR_.gr.), data = pruned.mammal.data,
+                   pruned.mammmal.tree, model = 'lambda', boot = 0)
+plot(log10(pruned.mammal.data$Body_mass_for_BMR_.gr.), log10(pruned.mammal.data$BMR_.m102.hour.), las)
+abline(a = fit.phy$coefficients[1], b = fit.phy$coefficients[2])
+b1.phy <- round(fit.phy$coefficients[2],3)
+eqn <-bquote(italic(z) == .(b1.phy))
+text(0.5, 4.5, eqn, pos = 4)
 
 ```
   
@@ -369,10 +505,112 @@ If not, why?
 Is there anything you could do differently that would improve your tree, especially with regard to future analyses done by your team?
 
 ```{r}
+FJ916807 to FJ916903,
+HQ386253 to HQ386631, and HQ530565 to HQ532908, except
+HQ530583, HQ531638, and HQ532521.
+>FJ916807.1 Uncultured actinobacterium clone CH1A11 16S ribosomal RNA gene, partial sequence
+TTTTTCGGTTGAAGATGATCTCGCGGCCTATCAGCTTGTTGGTGAGGTAATGGCTCACCAAGGCGACGAC
+GGGTAGCCGGCCTGAGAGGGCGACCGGCCACACTGGGACTGAGACACGGCCCAGACTCCTACGGGAGGCA
+GCAGTGGGGAATATTGGGCAATGGAGGAAACTCTGACCCAGCGACGCCGCGTGCGGGATGAAGGCCTTCG
+GGTTGTAAACCGCTTTCACCAGGGAAGAAGCGAAAGTGACGGTACCTGCAAAAAGAAGCACCGGCTAACT
+ATGTGCCAGCAGCCGCGGTAATACATAGGGTGCAAGCGTTGTCCGGAATTATTGGGCGTAAAGAGCTCTT
+AGGTGGTTCGTCTCGTCGGATGTGAAACTCTGGGGCTTAACCCCA
 
+>FJ916903.1 Uncultured Bacteroidetes bacterium clone ME7bC6 16S ribosomal RNA gene, partial sequence
+ACGGTGATCCTTCTGTACATAGCTGGTGCACGGGCTGCGTTAACACGCTATGCAACCTACCTTACATTGG
+GGGATAGCCTTTCGAAAGGGAGCATTAATACCGCATAAGACAGCTAGCTGGGCATCCAGCAGCTGTTAAA
+TGATCTATCGATGTAAGATGGGCATGCGTCCAATTAGTCAGTTGGCGAGGCAACGGCTCACCAAGACTTT
+GATTGGTAGGGGAACTGAGAGGTCAATCCCCCACACTGGCACTGAGATACGGGCCAGACTCCTACGGGAG
+GCAGCAGTAGGGAATATTGGGCAATGGACGCAAGTCTGACCCAG
 
+>HQ386253.1 Bacteroidetes bacterium enrichment culture clone LiUU-12-16 16S ribosomal RNA gene, partial sequence
+GGAATATTGGTCAATGGGCGCAAGCCTGAACCAGCCATGCCGCGTGCAGGAAGAATGCCCTATGGGTTGT
+AAACTGCTTTTATTTAGGAATAAACCTTTCTACGTGTAGAAAGCTGAAGGTACTGAATGAATAAGCACCG
+GCTAACTCCGTGCCAGCAGCCGCGGTAATACGGAGGGTGCAAGCGTTATCCGGAATCATTGGGTTTAAAG
+GGTCCGCAGGCGGGCGTATAAGTCAGTGGTGAAATCCTGCAGCTTAACTGCAGAACTGCCATTGATACTG
+TACGTCTTGAATTCGGTCGAAGTGGGCGGAATGTGTAGTGTAGCGGTGAAATGCATAGATATTACACAGA
+ACACCGATAGCGAAGGCTGCTCACTAGGCCTGGATTGACGCTCAGGGACGAAAGCGTGGGGATCAAACAG
+GATAGATACCCTGGTAGTCCACGC
 
+>HQ386631.1 Bacterium enrichment culture clone LiUU-18-315 16S ribosomal RNA gene, partial sequence
+CAGCCGCCGCGCTAATTCGAAGGGTGCGAGCGTTATTCGGATTTACTGGGCGTAAAGGGCGCGTAGGCGG
+CTTTTTAAGTCACTTGTTAAAGACCACTTAAATCGGTGGAGATGCGGGTGAAACTGGAGAGCTAGAGGGT
+AGGAGAGAGAAGTGGAATTCTTGGAGTAGCGGTAAAATGCGTAGATCTCAAGAGGAACACCGATGGCGAA
+GGCAGCTTCTTGGCCTACTACTGACGCTGAGGCGCGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTG
+GTAGTCCACGCTGTAAACGATGATCACTAGATGTCAGCTTCCCTTGAGGAGGTTGGTATCGTAGCTAACG
+CGATAAGTGATCCGCCTGGGGAGTACGGTCGCAAGACTAAAACTTAAATGAATTGACGG
 
+>HQ530565.1 Uncultured actinobacterium clone 30LAKE01A03 16S ribosomal RNA gene, partial sequence
+CGCATTAAGCGTCCCGCCTGGGGAGTACGACCGCAAGGTTAAAACTCAAAGGAACTGACCGGGGGCCCGC
+ACAAGCAGCGGAGCATGCGGCTTAATTCGATGCAACGCGAAGAACCTTACCTAGGCTTGACATGCATTGA
+AAACTGTTAGAGATAACAGGTCCGCAAGGGCTTTGCACAGGTGGTGCATGGCTGTCGTCAGCTCGTGTCG
+TGAGATGTTGGGTTAAGTCCCGCAACGAGCGCAACCCTCGTCTTGTGTTGCCAACAGGTAATGCTGGGAA
+CTCACAAGAGACTGCCGGGGTCAACTCGGAGGAAGGTGGGGACGACGTCAAGTCATCATGCCCCTTATGT
+CTAGGGCTGCACGCATGCTACAATGGCCGATACAAAGGGCTGCGATACCGCAAGGTGGAGCGAATCCCAT
+AAAGTCGGTCTCAGTTCGGATTGAGGTCTGCAACTCGACCTCATGAAGTTGGAGTTGCTAGTAATCGCGG
+ATCAGCAACGCCGCGGTGAATACGTTCCCGGGCCTTGTACACACCGCCCGTCACGTCACGAAAGTCGGTA
+ACACCCAAAACCAGTGTTCCAACCGTAAGGGGGAAGCTG
+
+>HQ532908.1 Uncultured actinobacterium clone TB1H9 16S ribosomal RNA gene, partial sequence
+TTCGACGCAACGCGAAGAACCTTACCAAGGCTCGACATATACCGAAAAGCAGCAGAGATGTTGTGTCCGC
+AAGGGCGGTATACAGGTGGTGCATGGTTGTCGTCAGCTCGTGTCGTGAGATGTTGGGTTAAGTCCCGCAA
+CGGGCGCAACCCTCGTTCTGTGTTGCCAGCATTTAGTTGGGGGCTCACAGGAGACTGCCGTGGTCAACAC
+GGAGGAAGGTGGGGATGACGTCAAATCATCATGCCCCTTATGTCTTGGGCTGCACGCATGCTACAATGGC
+AGGTACAAAGGGCTGCGATACCGTAAGGTGGAGCGAATCCCAAAAAGTCTGTCTCAGTTCGGATTGAGGT
+CTGCAACTCGACCTCATGAAGTCGGAGTTGCTAGTAATCGTAGATCAGCAACGCTACGGTGAATACGTTC
+CCGGGGCTTGTACACACCGCCCGTCACGTCACGAAAGTCGGTAACACCCAAAGTCAGTGGCCCAACCGCA
+AGGA
+
+>FJ916875.1 Uncultured Bacteroidetes bacterium clone MI1A7 16S ribosomal RNA gene, partial sequence
+TCGAGGGGTAGAGTAAGCTTGCTTACTTGAGACCGGCGCACGGGTGCGTAACGCGTATGCAATCTACCTT
+ATACAGGGGAATAGCCCAGAGAAATTTGGATTAATGCCCCATGGTATTATAGAGTGGCATCACTTTATAA
+TTAAAGTTCCAACGGTATAAGATGAGCATGCGTCCCATTAGTTAGTTGGTAAGGTAACGGCTTACCAAGA
+CGATGATGGGTAGGGGTCCTGAGAGGGAGATCCCCCACACTGGTACTGAGACACGGACCA
+
+>HQ386400.1 Bacterium enrichment culture clone LiUU-15-729 16S ribosomal RNA gene, partial sequence
+CAGCCGCCGCGGTAATACAGAGGATGCAAGCGTTATCCGGAATCACTGGGCATAAAGCGTCTGTAGGTTG
+CCTACCAAGTCTGCTGTTAAAGATCAGGGCCTAACCCTGGGAAAGCAGTGGAAACTAGTAGGCTTGAGTG
+TGGTAGAGGTAGAGGGAATTCCTGGTGTAGCGGTGAAATGCGTAGATATTAGGAAGAACACCAATGGCGA
+AAGCACTCTACTGGGCCATAACTGACACTGAGAGACGACAGCTAGGGGAGCAAATGGGATTAGATACCCC
+AGTAGTCCTAGCCGTAAACGATGGATACTAGGTGTTGCACGTATTAACCCGTGCAGTATCGTAGCTAAGG
+CGTTAAGTATCCCGCCTGGGAAGTACGCTCGCAAGAGTGAAACTTAAATGAATTGACGG
+
+>HQ530755.1 Uncultured actinobacterium clone 30LAKE31D05 16S ribosomal RNA gene, partial sequence
+CGGAGCATGCGGCTTAATTCGACGCAACGCGAAGAACCTTACCAAGGCTTGACATATACAGGAATATGGC
+AGAGATGTCATAGCCGCAAGGTCTGTATACAGGTGGTGCATGGTTGTCGTCAGCTCGTGTCGTGAGATGT
+TGGGTTAAGTCCCGCAACGAGCGCAACCCTCGTTCTGTGTTGCCAGCATTTAGTTGGGGACTCACAGGAG
+ACTGCCGGGGTTAACTCGGAGGAAGGTGGGGATGACGTCAAATCATCATGCCCCTTATGTCTTGGGCTGC
+ACGCATGCTACAATGGCTGGTACAAACGGCTGCGATACCGCAAGGTGGAGCGAATCCGATAAAGCCAGTC
+TCAGTTCGGATTGGGGTCTGCAACTCGACCCCATGAAGTCGGAGTTGCTAGTAATCGTAGATCAGCAACG
+CTACGGTGAATACGTTCCCGGGGCTTGTACACACCGCCCGTCACATCACGAAAGTCGGAACACCCAAAGT
+CAGT
+
+>FJ916900.1 Uncultured beta proteobacterium clone LT1bG1 16S ribosomal RNA gene, partial sequence
+AACGCGCTGAGTAATACATCGTGAACGTACCTTATCGTGGGGGATAACGCAGCGAAAGTTGCGCTAACTA
+CCGCATACGCCCTGAGGGGGAAAGCGGGGGACCGTAAGGCCTCGCGCGATTAGAGCGGCCGATGTCTGAT
+TAGCTTGTTGGTGAGGTAAAAGCTCACCAAGGCGATGATCAGTAGCTGGTCTGAGAGGACGATCATCCAC
+ACTGGGACTGAGACACGGCCCAGACTCCTACGGGAGGCAGCAGTGGGGAATTTTGGACAATGGGGGCAAC
+CCTGATCCAGCAATGCCT
+
+>FJ917000.1 Batocarpus costaricensis voucher GW1463 18S ribosomal RNA gene, partial sequence; internal transcribed spacer 1, 5.8S ribosomal RNA gene, and internal transcribed spacer 2, complete sequence; and 28S ribosomal RNA gene, partial sequence
+MTKCSAWWGATATTGTTGAAACCTGCCCAGCAGAAAGACCCGTGAACACGTTACAACACTCGGGGGGGCG
+AGGGGCGCCGCGCGCGCCTTGATTCCCCCCACGCCGAGTGCGCGTGGCTTTGCCCCGCGTCCCCGGACAC
+TAACCAACCCCGGCGCGGAATGCGTCAAGGAAACATAAACAAACGAGCTTCTGCTGCAGCCCCGGACTCG
+GTGCTTGCTGCGGCGGACGTGTCGTGTTTCGTTTAAGTCTTAAAACGACTCTCGGCAACGGATATCTCGG
+CTCTCGCATCGATRAAGAACGTAGCGAAATGCGATACTTGGTGTGAATTGCAGAATCCCGTGAACCATCG
+AGTCTTTGAACGCAAGTTGCGCCCGAAGCCATCCGGCCGAGGGCACGTCTGCCTGGGCGTCACACACCGT
+TGCCCCCCCTAAATCCCTTTGGCGCCGTCCATATGGTGCATGGGGACTACGGGGGGCGGATGATGGCCTC
+CCGTGGGCCTTGACCCGCGGCTGGTCTAAATTTGAGTCCCCGGTCACGGTTGCCGTGGCAATAGGTGGTC
+GTCGAACATTCGGTGCCCCGCCATGTGCTCTGGACAGAAAGCATCGGGAGACTTTACAAACTCGACCCCG
+ACGCACCCCACGCGGGTGCTTCCAACGCGAACCCAGGTCAGCG
+
+>FJ916950.1 Physalia sp. DRP-2009 isolate Foxton3 cytochrome oxidase subunit I (COI) gene, partial cds; mitochondrial
+CCGGGAGCTCTCATATTAAATATAGTGGTTATAAAGTTAATGGCACCCATGATTGATGAGGCACCTGCAC
+AGTGTAAACTGAAGATAGCCATATCAACTGACCCTCCGGAATGAGTTTGGGGGCCAGACAAAGGAGGGTA
+AACAGTTCAACCAGTACCTGCACCTTGTTCTATTAGAGATGACCCTAGTAATAATAATAGAGCAGGGGGC
+AGTAACCAAAAACTTAGGTTATTCAACCTAGGAAAGGCCATATCCGGAGCACCTATAAACAGGGGTACGA
+ACCAGTTACCAAATCCTCCAATTAGAACTGGCATTACAAGGAAAAAGATCATAACAAATGCATGAGCAGT
+TACTATAACATTATAGAGATGATCATCTCCAAACATGGTACCAGGTCCTGACAATTCCAATCTGA
 ```
 
 
