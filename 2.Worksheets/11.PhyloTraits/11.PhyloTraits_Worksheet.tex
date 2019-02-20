@@ -1,0 +1,1342 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=2.54cm]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={11. Worksheet: Phylogenetic Diversity - Traits},
+            pdfauthor={Andrea Phillips; Z620: Quantitative Biodiversity, Indiana University},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{11. Worksheet: Phylogenetic Diversity - Traits}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Andrea Phillips; Z620: Quantitative Biodiversity, Indiana University}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{19 February, 2019}
+
+
+\begin{document}
+\maketitle
+
+\subsection{OVERVIEW}\label{overview}
+
+Up to this point, we have been focusing on patterns taxonomic diversity
+in Quantitative Biodiversity. Although taxonomic diversity is an
+important dimension of biodiversity, it is often necessary to consider
+the evolutionary history or relatedness of species. The goal of this
+exercise is to introduce basic concepts of phylogenetic diversity.
+
+After completing this exercise you will be able to:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  create phylogenetic trees to view evolutionary relationships from
+  sequence data
+\item
+  map functional traits onto phylogenetic trees to visualize the
+  distribution of traits with respect to evolutionary history
+\item
+  test for phylogenetic signal within trait distributions and
+  trait-based patterns of biodiversity
+\end{enumerate}
+
+\subsection{Directions:}\label{directions}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  In the Markdown version of this document in your cloned repo, change
+  ``Student Name'' on line 3 (above) with your name.
+\item
+  Complete as much of the worksheet as possible during class.
+\item
+  Use the handout as a guide; it contains a more complete description of
+  data sets along with examples of proper scripting needed to carry out
+  the exercises.
+\item
+  Answer questions in the worksheet. Space for your answers is provided
+  in this document and is indicated by the ``\textgreater{}'' character.
+  If you need a second paragraph be sure to start the first line with
+  ``\textgreater{}''. You should notice that the answer is highlighted
+  in green by RStudio (color may vary if you changed the editor theme).
+\item
+  Before you leave the classroom today, it is \emph{imperative} that you
+  \textbf{push} this file to your GitHub repo, at whatever stage you
+  are. This will enable you to pull your work onto your own computer.
+\item
+  When you have completed the worksheet, \textbf{Knit} the text and code
+  into a single PDF file by pressing the \texttt{Knit} button in the
+  RStudio scripting panel. This will save the PDF output in your
+  `8.BetaDiversity' folder.
+\item
+  After Knitting, please submit the worksheet by making a \textbf{push}
+  to your GitHub repo and then create a \textbf{pull request} via
+  GitHub. Your pull request should include this file
+  (\textbf{11.PhyloTraits\_Worksheet.Rmd}) with all code blocks filled
+  out and questions answered) and the PDF output of \texttt{Knitr}
+  (\textbf{11.PhyloTraits\_Worksheet.pdf}).
+\end{enumerate}
+
+The completed exercise is due on \textbf{Wednesday, February
+20\textsuperscript{th}, 2019 before 12:00 PM (noon)}.
+
+\subsection{1) SETUP}\label{setup}
+
+Typically, the first thing you will do in either an R script or an
+RMarkdown file is setup your environment. This includes things such as
+setting the working directory and loading any packages that you will
+need.
+
+In the R code chunk below, provide the code to:\\
+1. clear your R environment,\\
+2. print your current working directory,\\
+3. set your working directory to your ``\emph{/11.PhyloTraits}'' folder,
+and\\
+4. load all of the required R packages (be sure to install if needed).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rm}\NormalTok{(}\DataTypeTok{list =} \KeywordTok{ls}\NormalTok{())}
+\KeywordTok{getwd}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "C:/Users/andjr/Github2/QB2019_Phillips/2.Worksheets/11.PhyloTraits"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#setwd("~/GitHub/QB-2019/2.Worksheets/11.PhyloTraits")}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{2) DESCRIPTION OF DATA}\label{description-of-data}
+
+The maintenance of biodiversity is thought to be influenced by
+\textbf{trade-offs} among species in certain functional traits. One such
+trade-off involves the ability of a highly specialized species to
+perform exceptionally well on a particular resource compared to the
+performance of a generalist. In this exercise, we will take a
+phylogenetic approach to mapping phosphorus resource use onto a
+phylogenetic tree while testing for specialist-generalist trade-offs.
+
+\subsection{3) SEQUENCE ALIGNMENT}\label{sequence-alignment}
+
+\textbf{\emph{Question 1}}: Using your favorite text editor, compare the
+\texttt{p.isolates.fasta} file and the \texttt{p.isolates.afa} file.
+Describe the differences that you observe between the two files.
+
+\begin{quote}
+\textbf{\emph{Answer 1}}:
+\end{quote}
+
+In the R code chunk below, do the following: 1. read your alignment
+file, 2. convert the alignment to a DNAbin object, 3. select a region of
+the gene to visualize (try various regions), and 4. plot the alignment
+using a grid to visualize rows of sequences.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{package.list <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'ape'}\NormalTok{, }\StringTok{'seqinr'}\NormalTok{, }\StringTok{'phylobase'}\NormalTok{, }\StringTok{'adephylo'}\NormalTok{, }\StringTok{'geiger'}\NormalTok{, }\StringTok{'picante'}\NormalTok{, }\StringTok{'stats'}\NormalTok{, }\StringTok{'RColorBrewer'}\NormalTok{, }\StringTok{'caper'}\NormalTok{, }\StringTok{'phylolm'}\NormalTok{, }\StringTok{'pmc'}\NormalTok{, }\StringTok{'ggplot2'}\NormalTok{, }\StringTok{'tidyr'}\NormalTok{, }\StringTok{'dplyr'}\NormalTok{, }\StringTok{'phangorn'}\NormalTok{, }\StringTok{'pander'}\NormalTok{) }
+\ControlFlowTok{for}\NormalTok{ (package }\ControlFlowTok{in}\NormalTok{ package.list) \{}
+  \ControlFlowTok{if}\NormalTok{ (}\OperatorTok{!}\KeywordTok{require}\NormalTok{(package, }\DataTypeTok{character.only=}\OtherTok{TRUE}\NormalTok{, }\DataTypeTok{quietly=}\OtherTok{TRUE}\NormalTok{)) \{}
+    \KeywordTok{install.packages}\NormalTok{(package)}
+    \KeywordTok{library}\NormalTok{(package, }\DataTypeTok{character.only=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'seqinr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:ape':
+## 
+##     as.alignment, consensus
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'phylobase'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:ape':
+## 
+##     edges
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'permute'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:seqinr':
+## 
+##     getType
+\end{verbatim}
+
+\begin{verbatim}
+## This is vegan 2.5-4
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'nlme'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:seqinr':
+## 
+##     gls
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'dplyr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:MASS':
+## 
+##     select
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:nlme':
+## 
+##     collapse
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:seqinr':
+## 
+##     count
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'phangorn'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:vegan':
+## 
+##     diversity, treedist
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#muscle -in ./data/p.isolates.fasta -out ./data/p.isolates.afa}
+
+\NormalTok{read.aln <-}\StringTok{ }\KeywordTok{read.alignment}\NormalTok{(}\DataTypeTok{file =} \StringTok{"./data/p.isolates.afa"}\NormalTok{, }\DataTypeTok{format =} \StringTok{"fasta"}\NormalTok{)}
+
+\NormalTok{p.DNAbin <-}\StringTok{ }\KeywordTok{as.DNAbin}\NormalTok{(read.aln)}
+
+\NormalTok{window <-}\StringTok{ }\NormalTok{p.DNAbin[, }\DecValTok{200}\OperatorTok{:}\DecValTok{500}\NormalTok{]}
+
+\KeywordTok{image.DNAbin}\NormalTok{(window, }\DataTypeTok{cex.lab =} \FloatTok{0.50}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{11.PhyloTraits_Worksheet_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+\textbf{\emph{Question 2}}: Make some observations about the
+\texttt{muscle} alignment of the 16S rRNA gene sequences for our
+bacterial isolates and the outgroup, \emph{Methanosarcina}, a member of
+the domain Archaea. Move along the alignment by changing the values in
+the \texttt{window} object.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\tightlist
+\item
+  Approximately how long are our sequence reads?\\
+\item
+  What regions do you think would are appropriate for phylogenetic
+  inference and why?
+\end{enumerate}
+
+\begin{quote}
+\textbf{\emph{Answer 2a}}: I'm not quite sure how to tell\ldots{}
+wouldn't it just be as long as whatever gene we are looking at? In that
+case, I'd say our sequence reads are about 200 bp long, because that's
+how long all the sequences align fairly well before becoming quite
+different. \textbf{\emph{Answer 2b}}: I think the region between about
+50 and 250 bp would be good for phylogenetic inference because the
+sequences are fairly similar, but different enough that we would be able
+to draw some relationships based on those differences.
+\end{quote}
+
+\subsection{4) MAKING A PHYLOGENETIC
+TREE}\label{making-a-phylogenetic-tree}
+
+Once you have aligned your sequences, the next step is to construct a
+phylogenetic tree. Not only is a phylogenetic tree effective for
+visualizing the evolutionary relationship among taxa, but as you will
+see later, the information that goes into a phylogenetic tree is needed
+for downstream analysis.
+
+\subsubsection{A. Neighbor Joining
+Trees}\label{a.-neighbor-joining-trees}
+
+In the R code chunk below, do the following:\\
+1. calculate the distance matrix using \texttt{model\ =\ "raw"},\\
+2. create a Neighbor Joining tree based on these distances,\\
+3. define ``Methanosarcina'' as the outgroup and root the tree, and\\
+4. plot the rooted tree.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{seq.dist.raw <-}\StringTok{ }\KeywordTok{dist.dna}\NormalTok{(p.DNAbin, }\DataTypeTok{model =} \StringTok{"raw"}\NormalTok{, }\DataTypeTok{pairwise.deletion =} \OtherTok{FALSE}\NormalTok{)}
+
+\NormalTok{nj.tree <-}\StringTok{ }\KeywordTok{bionj}\NormalTok{(seq.dist.raw)}
+\NormalTok{outgroup <-}\StringTok{ }\KeywordTok{match}\NormalTok{(}\StringTok{"Methanosarcina"}\NormalTok{, nj.tree}\OperatorTok{$}\NormalTok{tip.label)}
+\NormalTok{nj.rooted <-}\StringTok{ }\KeywordTok{root}\NormalTok{(nj.tree, outgroup, }\DataTypeTok{resolve.root =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{) }\OperatorTok{+}\StringTok{ }\FloatTok{0.1}\NormalTok{)}
+\KeywordTok{plot.phylo}\NormalTok{(nj.rooted, }\DataTypeTok{main =} \StringTok{"Neighbor Joining Tree"}\NormalTok{, }\StringTok{"phylogram"}\NormalTok{, }\DataTypeTok{use.edge.length =} \OtherTok{FALSE}\NormalTok{,}
+           \DataTypeTok{direction =} \StringTok{"right"}\NormalTok{, }\DataTypeTok{cex =} \FloatTok{0.6}\NormalTok{, }\DataTypeTok{label.offset =} \DecValTok{1}\NormalTok{)}
+\KeywordTok{add.scale.bar}\NormalTok{(}\DataTypeTok{cex =} \FloatTok{0.7}\NormalTok{)}
+\KeywordTok{grid}\NormalTok{(}\KeywordTok{ncol}\NormalTok{(window), }\KeywordTok{nrow}\NormalTok{(window), }\DataTypeTok{col =} \StringTok{"lightgrey"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{11.PhyloTraits_Worksheet_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\textbf{\emph{Question 3}}: What are the advantages and disadvantages of
+making a neighbor joining tree?
+
+\begin{quote}
+\textbf{\emph{Answer 3}}: Neighbor joining trees are convenient because
+they are quick to make and give a good snapshot of the general
+relationships among the taxa at hand. However, it generally can only be
+used as a snapshot, only a starting point for establishing the most
+accurate tree. The neighbor joining tree method does not take multiple
+substitutions into account the same site. They also don't account for
+substitution biases.
+\end{quote}
+
+\subsubsection{B) SUBSTITUTION MODELS OF DNA
+EVOLUTION}\label{b-substitution-models-of-dna-evolution}
+
+In the R code chunk below, do the following:\\
+1. make a second distance matrix based on the Felsenstein 84
+substitution model,\\
+2. create a saturation plot to compare the \emph{raw} and
+\emph{Felsenstein (F84)} substitution models,\\
+3. make Neighbor Joining trees for both, and\\
+4. create a cophylogenetic plot to compare the topologies of the trees.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{seq.dist.F84 <-}\StringTok{ }\KeywordTok{dist.dna}\NormalTok{(p.DNAbin, }\DataTypeTok{model =} \StringTok{"F84"}\NormalTok{, }\DataTypeTok{pairwise.deletion =} \OtherTok{FALSE}\NormalTok{)}
+
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar =} \KeywordTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{1}\NormalTok{) }\OperatorTok{+}\StringTok{ }\FloatTok{0.1}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(seq.dist.raw, seq.dist.F84,}
+     \DataTypeTok{pch =} \DecValTok{20}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{, }\DataTypeTok{las =} \DecValTok{1}\NormalTok{, }\DataTypeTok{asp =} \DecValTok{1}\NormalTok{, }\DataTypeTok{xlim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{0.7}\NormalTok{), }\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{0.7}\NormalTok{), }
+     \DataTypeTok{xlab =} \StringTok{"Raw Distance"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"F84 Distance"}\NormalTok{) }
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{b =} \DecValTok{1}\NormalTok{, }\DataTypeTok{a =} \DecValTok{0}\NormalTok{, }\DataTypeTok{lty =} \DecValTok{2}\NormalTok{)}
+\KeywordTok{text}\NormalTok{(}\FloatTok{0.65}\NormalTok{, }\FloatTok{0.6}\NormalTok{, }\StringTok{"1:1"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{11.PhyloTraits_Worksheet_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{raw.tree <-}\KeywordTok{bionj}\NormalTok{(seq.dist.raw)}
+\NormalTok{F84.tree <-}\StringTok{ }\KeywordTok{bionj}\NormalTok{(seq.dist.F84)}
+\NormalTok{raw.outgroup <-}\StringTok{ }\KeywordTok{match}\NormalTok{(}\StringTok{"Methanosarcina"}\NormalTok{, raw.tree}\OperatorTok{$}\NormalTok{tip.label)}
+\NormalTok{F84.outgroup <-}\StringTok{ }\KeywordTok{match}\NormalTok{(}\StringTok{"Methanosarcina"}\NormalTok{, F84.tree}\OperatorTok{$}\NormalTok{tip.label)}
+\NormalTok{raw.rooted <-}\StringTok{ }\KeywordTok{root}\NormalTok{(raw.tree, raw.outgroup, }\DataTypeTok{resolve.root =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{F84.rooted <-}\StringTok{ }\KeywordTok{root}\NormalTok{(F84.tree, F84.outgroup, }\DataTypeTok{resolve.root =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{layout}\NormalTok{(}\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{), }\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{), }\DataTypeTok{width =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{0}\NormalTok{))}
+\KeywordTok{plot.phylo}\NormalTok{(raw.rooted, }\DataTypeTok{type =} \StringTok{"phylogram"}\NormalTok{, }\DataTypeTok{direction =} \StringTok{"right"}\NormalTok{, }\DataTypeTok{show.tip.label =} \OtherTok{TRUE}\NormalTok{,}
+           \DataTypeTok{use.edge.length =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{adj =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{cex =} \FloatTok{0.6}\NormalTok{, }\DataTypeTok{label.offset =} \DecValTok{2}\NormalTok{, }\DataTypeTok{main =} \StringTok{"Raw"}\NormalTok{)}
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\KeywordTok{plot.phylo}\NormalTok{(F84.rooted, }\DataTypeTok{type =} \StringTok{"phylogram"}\NormalTok{, }\DataTypeTok{direction =} \StringTok{"left"}\NormalTok{, }\DataTypeTok{show.tip.label =} \OtherTok{TRUE}\NormalTok{,}
+           \DataTypeTok{use.edge.length =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{adj =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{cex =} \FloatTok{0.6}\NormalTok{, }\DataTypeTok{label.offset =} \DecValTok{2}\NormalTok{, }\DataTypeTok{main =} \StringTok{"F84"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{11.PhyloTraits_Worksheet_files/figure-latex/unnamed-chunk-4-2.pdf}
+
+In the R code chunk below, do the following:\\
+1. pick another substitution model,\\
+2. create a distance matrix and tree for this model,\\
+3. make a saturation plot that compares that model to the
+\emph{Felsenstein (F84)} model,\\
+4. make a cophylogenetic plot that compares the topologies of both
+models, and\\
+5. be sure to format, add appropriate labels, and customize each plot.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{seq.dist.JC69 <-}\StringTok{ }\KeywordTok{dist.dna}\NormalTok{(p.DNAbin, }\DataTypeTok{model =} \StringTok{"JC69"}\NormalTok{, }\DataTypeTok{pairwise.deletion =} \OtherTok{FALSE}\NormalTok{)}
+
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar =} \KeywordTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{1}\NormalTok{) }\OperatorTok{+}\StringTok{ }\FloatTok{0.1}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(seq.dist.raw, seq.dist.F84,}
+     \DataTypeTok{pch =} \DecValTok{20}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{, }\DataTypeTok{las =} \DecValTok{1}\NormalTok{, }\DataTypeTok{asp =} \DecValTok{1}\NormalTok{, }\DataTypeTok{xlim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{0.7}\NormalTok{), }\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{0.7}\NormalTok{), }
+     \DataTypeTok{xlab =} \StringTok{"Raw Distance"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"JC69 Distance"}\NormalTok{) }
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{b =} \DecValTok{1}\NormalTok{, }\DataTypeTok{a =} \DecValTok{0}\NormalTok{, }\DataTypeTok{lty =} \DecValTok{2}\NormalTok{)}
+\KeywordTok{text}\NormalTok{(}\FloatTok{0.65}\NormalTok{, }\FloatTok{0.6}\NormalTok{, }\StringTok{"1:1"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{11.PhyloTraits_Worksheet_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{F84.tree <-}\StringTok{ }\KeywordTok{bionj}\NormalTok{(seq.dist.F84)}
+\NormalTok{JC69.tree <-}\StringTok{ }\KeywordTok{bionj}\NormalTok{(seq.dist.JC69)}
+\NormalTok{F84.outgroup <-}\StringTok{ }\KeywordTok{match}\NormalTok{(}\StringTok{"Methanosarcina"}\NormalTok{, F84.tree}\OperatorTok{$}\NormalTok{tip.label)}
+\NormalTok{JC69.outgroup <-}\StringTok{ }\KeywordTok{match}\NormalTok{(}\StringTok{"Methanosarcina"}\NormalTok{, JC69.tree}\OperatorTok{$}\NormalTok{tip.label)}
+\NormalTok{F84.rooted <-}\StringTok{ }\KeywordTok{root}\NormalTok{(F84.tree, F84.outgroup, }\DataTypeTok{resolve.root =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{JC69.rooted <-}\StringTok{ }\KeywordTok{root}\NormalTok{(JC69.tree, JC69.outgroup, }\DataTypeTok{resolve.root =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{layout}\NormalTok{(}\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{), }\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{), }\DataTypeTok{width =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{0}\NormalTok{))}
+\KeywordTok{plot.phylo}\NormalTok{(F84.rooted, }\DataTypeTok{type =} \StringTok{"phylogram"}\NormalTok{, }\DataTypeTok{direction =} \StringTok{"right"}\NormalTok{, }\DataTypeTok{show.tip.label =} \OtherTok{TRUE}\NormalTok{,}
+           \DataTypeTok{use.edge.length =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{adj =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{cex =} \FloatTok{0.6}\NormalTok{, }\DataTypeTok{label.offset =} \DecValTok{2}\NormalTok{, }\DataTypeTok{main =} \StringTok{"F84"}\NormalTok{)}
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\KeywordTok{plot.phylo}\NormalTok{(JC69.rooted, }\DataTypeTok{type =} \StringTok{"phylogram"}\NormalTok{, }\DataTypeTok{direction =} \StringTok{"left"}\NormalTok{, }\DataTypeTok{show.tip.label =} \OtherTok{TRUE}\NormalTok{,}
+           \DataTypeTok{use.edge.length =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{adj =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{cex =} \FloatTok{0.6}\NormalTok{, }\DataTypeTok{label.offset =} \DecValTok{2}\NormalTok{, }\DataTypeTok{main =} \StringTok{"JC69"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{11.PhyloTraits_Worksheet_files/figure-latex/unnamed-chunk-5-2.pdf}
+
+\textbf{\emph{Question 4}}:
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\tightlist
+\item
+  Describe the substitution model that you chose. What assumptions does
+  it make and how does it compare to the F84 model?
+\item
+  Using the saturation plot and cophylogenetic plots from above,
+  describe how your choice of substitution model affects your
+  phylogenetic reconstruction. If the plots are inconsistent with one
+  another, explain why.
+\item
+  How does your model compare to the \emph{F84} model and what does this
+  tell you about the substitution rates of nucleotide transitions?
+\end{enumerate}
+
+\begin{quote}
+\textbf{\emph{Answer 4a}}: I decided to use the Jukes-Cantor model from
+1969. It's a very simple model that assumes that all nucleotides are
+equally frequent and that there's the same substitution probability for
+all nucleotides. The F84 model takes the difference in transitions and
+transversions into account.\\
+\textbf{\emph{Answer 4b}}: The F84 plot differs slightly from the Raw
+distances, but only slightly. This small inconsistency is likely due to
+substitution bias taken into account by the F84 model.\\
+\textbf{\emph{Answer 4c}}: Interestingly, the the Jukes-Cantor and
+Felsenstein 84 models output identical trees. This tells me that the
+substitution rates of nucleotide transitions are equally probable in
+this particular data set.
+\end{quote}
+
+\subsubsection{C) ANALYZING A MAXIMUM LIKELIHOOD
+TREE}\label{c-analyzing-a-maximum-likelihood-tree}
+
+In the R code chunk below, do the following:\\
+1. Read in the maximum likelihood phylogenetic tree used in the handout.
+2. Plot bootstrap support values onto the tree
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Every time I tried to run this section, it would stop on line 226 and freeze up. }
+\CommentTok{#I let it run for a couple hours and it still just got stuck every time. }
+
+\CommentTok{#dist.topo(raw.rooted, F84.rooted, method = "score")}
+
+\CommentTok{#p.DNAbin.phyDat <- read.phyDat("./data/p.isolates.afa", format = "fasta", type = "DNA")}
+\CommentTok{#fit <- pml(nj.rooted, data = p.DNAbin.phyDat)}
+\CommentTok{#fitJC <- optim.pml(fit, TRUE)}
+\CommentTok{#fitGTR <- optim.pml(fitGTR, model = "GTR", optInv = TRUE, optGamma = TRUE)}
+\CommentTok{#anova(fitJC, fitGTR)}
+\CommentTok{#AIC(fitJC)}
+\CommentTok{#AIC(fitGTR)}
+\CommentTok{#bs = bootstrap.pml(fitJC, bs = 100, optNni = TRUE,}
+ \CommentTok{#                  control = pmlcontrol(trace = 0))}
+\CommentTok{#ml.bootstrap <- read.tree("./data/ml_tree/RAxML_bipartitions.T1")}
+\CommentTok{#par(mar = c(1,1,2,1) + 0.1)}
+\CommentTok{#plot.phylo(ml.bootstrap, type = "phylogram", irection = "right", show.tip.label = TRUE,}
+\CommentTok{#           use.edge.length = FALSE, cex = 0.6, label.offset = 1, main = "Maximum Likelihood with Support") }
+\CommentTok{#add.scale.bar(cex = 0.7)}
+\CommentTok{#nodelabels(ml.bootstrap$node.label, font = 2, bg = "white", frame = "r", cex = 0.5)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{\emph{Question 5}}:
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\item
+  How does the maximum likelihood tree compare the to the
+  neighbor-joining tree in the handout? If the plots seem to be
+  inconsistent with one another, explain what gives rise to the
+  differences.
+\item
+  Why do we bootstrap our tree?
+\item
+  What do the bootstrap values tell you?
+\item
+  Which branches have very low support?
+\item
+  Should we trust these branches?
+\end{enumerate}
+
+\begin{quote}
+\textbf{\emph{Answer 5a}}: The groupings within the neighbor joining
+tree and maximum likelihood tree are similar, but not identical. This
+would essentially come down to the processes used to generate the trees.
+The tree with the greatest parsimony may not be the tree that arises
+from comparing taxa one by one as is done in creating a neighbor joining
+tree. \textbf{\emph{Answer 5b}}: We bootstrap our tree in order to
+establish its reliability, but ensuring we get the same thing every time
+we run the statistical analysis. \textbf{\emph{Answer 5c}}: The
+bootstrap values tell us how often the branch is in the same place as we
+re-sample our data. Since it is a percentage, it will be a value between
+0 and 100. \textbf{\emph{Answer 5d}}: We get pretty low support in the
+cluster of taxa including WG42, LL43F, etc., as low as 21-22\%.\\
+\textbf{\emph{Answer 5e}}: We should probably not trust these branches,
+there is often variation in how those branches and taxa relate to one
+another in the tree.
+\end{quote}
+
+\subsection{5) INTEGRATING TRAITS AND
+PHYLOGENY}\label{integrating-traits-and-phylogeny}
+
+\subsubsection{A. Loading Trait
+Database}\label{a.-loading-trait-database}
+
+In the R code chunk below, do the following:\\
+1. import the raw phosphorus growth data, and\\
+2. standardize the data for each strain by the sum of growth rates.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p.growth <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\StringTok{"./data/p.isolates.raw.growth.txt"}\NormalTok{, }\DataTypeTok{sep =} \StringTok{"}\CharTok{\textbackslash{}t}\StringTok{"}\NormalTok{, }\DataTypeTok{header =} \OtherTok{TRUE}\NormalTok{,}
+                       \DataTypeTok{row.names =} \DecValTok{1}\NormalTok{)}
+\NormalTok{p.growth.std <-}\StringTok{ }\NormalTok{p.growth }\OperatorTok{/}\StringTok{ }\NormalTok{(}\KeywordTok{apply}\NormalTok{(p.growth, }\DecValTok{1}\NormalTok{, sum))}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{B. Trait Manipulations}\label{b.-trait-manipulations}
+
+In the R code chunk below, do the following:\\
+1. calculate the maximum growth rate (\(\mu_{max}\)) of each isolate
+across all phosphorus types,\\
+2. create a function that calculates niche breadth (\emph{nb}), and\\
+3. use this function to calculate \emph{nb} for each isolate.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{umax <-}\StringTok{ }\NormalTok{(}\KeywordTok{apply}\NormalTok{(p.growth, }\DecValTok{1}\NormalTok{, max))}
+\NormalTok{levins <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(}\DataTypeTok{p_xi =} \StringTok{""}\NormalTok{)\{}
+\NormalTok{  p =}\StringTok{ }\DecValTok{0}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ p_xi)\{}
+\NormalTok{    p =}\StringTok{ }\NormalTok{p }\OperatorTok{+}\StringTok{ }\NormalTok{i}\OperatorTok{^}\DecValTok{2}
+\NormalTok{  \}}
+\NormalTok{  nb =}\StringTok{ }\DecValTok{1} \OperatorTok{/}\StringTok{ }\NormalTok{(}\KeywordTok{length}\NormalTok{(p_xi) }\OperatorTok{*}\StringTok{ }\NormalTok{p)}
+  \KeywordTok{return}\NormalTok{(nb)}
+\NormalTok{\}}
+\NormalTok{nb <-}\StringTok{ }\KeywordTok{as.matrix}\NormalTok{(}\KeywordTok{levins}\NormalTok{(p.growth.std))}
+\KeywordTok{rownames}\NormalTok{(nb) <-}\StringTok{ }\KeywordTok{row.names}\NormalTok{(p.growth)}
+\KeywordTok{colnames}\NormalTok{(nb) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"NB"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{C. Visualizing Traits on
+Trees}\label{c.-visualizing-traits-on-trees}
+
+In the R code chunk below, do the following:\\
+1. pick your favorite substitution model and make a Neighbor Joining
+tree,\\
+2. define your outgroup and root the tree, and\\
+3. remove the outgroup branch.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nj.tree <-}\StringTok{ }\KeywordTok{bionj}\NormalTok{(seq.dist.F84)}
+\NormalTok{nj.outgroup <-}\StringTok{ }\KeywordTok{match}\NormalTok{(}\StringTok{"Methanosarcina"}\NormalTok{, nj.tree}\OperatorTok{$}\NormalTok{tip.label)}
+\NormalTok{nj.rooted <-}\StringTok{ }\KeywordTok{root}\NormalTok{(nj.tree, nj.outgroup, }\DataTypeTok{resolve.root =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{nj.rooted <-}\StringTok{ }\KeywordTok{drop.tip}\NormalTok{(nj.rooted, }\StringTok{"Methanosarcina"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+In the R code chunk below, do the following:\\
+1. define a color palette (use something other than ``YlOrRd''),\\
+2. map the phosphorus traits onto your phylogeny,\\
+3. map the \emph{nb} trait on to your phylogeny, and\\
+4. customize the plots as desired (use \texttt{help(table.phylo4d)} to
+learn about the options).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mypalette <-}\StringTok{ }\KeywordTok{colorRampPalette}\NormalTok{(}\KeywordTok{brewer.pal}\NormalTok{(}\DecValTok{9}\NormalTok{, }\StringTok{"BuPu"}\NormalTok{))}
+
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{) }\OperatorTok{+}\StringTok{ }\FloatTok{0.1}\NormalTok{)}
+\NormalTok{x <-}\StringTok{ }\KeywordTok{phylo4d}\NormalTok{(nj.rooted, p.growth.std)}
+\KeywordTok{table.phylo4d}\NormalTok{(x, }\DataTypeTok{treetype =} \StringTok{"phylo"}\NormalTok{, }\DataTypeTok{symbol =} \StringTok{"colors"}\NormalTok{, }\DataTypeTok{show.node =} \OtherTok{TRUE}\NormalTok{,}
+              \DataTypeTok{cex.label =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{scale =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{use.edge.length =} \OtherTok{FALSE}\NormalTok{,}
+              \DataTypeTok{edge.color =} \StringTok{"black"}\NormalTok{, }\DataTypeTok{edge.width =} \DecValTok{2}\NormalTok{, }\DataTypeTok{box =} \OtherTok{FALSE}\NormalTok{,}
+              \DataTypeTok{col =} \KeywordTok{mypalette}\NormalTok{(}\DecValTok{25}\NormalTok{), }\DataTypeTok{pch =} \DecValTok{15}\NormalTok{, }\DataTypeTok{cex.symbol =} \FloatTok{1.25}\NormalTok{,}
+              \DataTypeTok{ratio.tree =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{cex.legend =} \FloatTok{1.5}\NormalTok{, }\DataTypeTok{center =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{11.PhyloTraits_Worksheet_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{5}\NormalTok{) }\OperatorTok{+}\StringTok{ }\FloatTok{0.1}\NormalTok{)}
+\NormalTok{x.nb <-}\StringTok{ }\KeywordTok{phylo4d}\NormalTok{(nj.rooted, nb)}
+\KeywordTok{table.phylo4d}\NormalTok{(x.nb, }\DataTypeTok{treetype =} \StringTok{"phylo"}\NormalTok{, }\DataTypeTok{symbol =} \StringTok{"colors"}\NormalTok{, }\DataTypeTok{show.node =} \OtherTok{TRUE}\NormalTok{,}
+              \DataTypeTok{cex.label =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{scale =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{use.edge.length =} \OtherTok{FALSE}\NormalTok{,}
+              \DataTypeTok{edge.color =} \StringTok{"black"}\NormalTok{, }\DataTypeTok{edge.width =} \DecValTok{2}\NormalTok{, }\DataTypeTok{box =} \OtherTok{FALSE}\NormalTok{,}
+              \DataTypeTok{col=}\KeywordTok{mypalette}\NormalTok{(}\DecValTok{25}\NormalTok{), }\DataTypeTok{pch =} \DecValTok{15}\NormalTok{, }\DataTypeTok{cex.symbol =} \FloatTok{1.25}\NormalTok{, }\DataTypeTok{var.label =}\NormalTok{ (}\StringTok{"NB"}\NormalTok{), }
+              \DataTypeTok{ratio.tree =} \FloatTok{0.90}\NormalTok{, }\DataTypeTok{cex.legend =} \FloatTok{1.5}\NormalTok{, }\DataTypeTok{center =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{11.PhyloTraits_Worksheet_files/figure-latex/unnamed-chunk-10-2.pdf}
+
+\textbf{\emph{Question 6}}:
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\item
+  Make a hypothesis that would support a generalist-specialist
+  trade-off.
+\item
+  What kind of patterns would you expect to see from growth rate and
+  niche breadth values that would support this hypothesis?
+\end{enumerate}
+
+\begin{quote}
+\textbf{\emph{Answer 6a}}: I would hypothesize that generalist species
+would have a high niche breadth but a low growth rate, as efficiency in
+using various phosphorous-based resources would likely be decreased if
+you are trying to use so many different compounds. Specialist species
+would likely have low niche breadth, but a high growth rate in the
+niches they are able to fill because they can more efficiently take
+advantage of the phosphorous-based resource they specialize in breaking
+down.\\
+\textbf{\emph{Answer 6b}}: As I sort of explained above, we would expect
+to see (and it appears we do see this), some species that have a
+moderate growth rate across all phosphorous resource, and others that
+have a higher growth rate across one or a few phosphorous resources.
+(Phosphorous resources in this case being what defines the niche.)
+\end{quote}
+
+\subsection{6) HYPOTHESIS TESTING}\label{hypothesis-testing}
+
+\subsubsection{A) Phylogenetic Signal: Pagel's
+Lambda}\label{a-phylogenetic-signal-pagels-lambda}
+
+In the R code chunk below, do the following:\\
+1. create two rescaled phylogenetic trees using lambda values of 0.5 and
+0,\\
+2. plot your original tree and the two scaled trees, and\\
+3. label and customize the trees as desired.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nj.lambda.}\DecValTok{5}\NormalTok{ <-}\StringTok{ }\KeywordTok{rescale}\NormalTok{(nj.rooted, }\StringTok{"lambda"}\NormalTok{, }\FloatTok{0.5}\NormalTok{)}
+\NormalTok{nj.lambda.}\DecValTok{0}\NormalTok{ <-}\StringTok{ }\KeywordTok{rescale}\NormalTok{(nj.rooted, }\StringTok{"lambda"}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+\KeywordTok{layout}\NormalTok{(}\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{), }\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{), }\DataTypeTok{width =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\FloatTok{0.5}\NormalTok{,}\DecValTok{2}\NormalTok{,}\FloatTok{0.5}\NormalTok{) }\OperatorTok{+}\StringTok{ }\FloatTok{0.1}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(nj.rooted, }\DataTypeTok{main =} \StringTok{"Original tree, lambda = 1"}\NormalTok{, }\DataTypeTok{cex =} \FloatTok{0.7}\NormalTok{, }\DataTypeTok{adj =} \FloatTok{0.5}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(nj.lambda.}\DecValTok{5}\NormalTok{, }\DataTypeTok{main =} \StringTok{"Rescaled tree, lambda = 0.5"}\NormalTok{, }\DataTypeTok{cex =} \FloatTok{0.7}\NormalTok{, }\DataTypeTok{adj =} \FloatTok{0.5}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(nj.lambda.}\DecValTok{0}\NormalTok{, }\DataTypeTok{main =} \StringTok{"Rescaled tree, lambda = 0"}\NormalTok{, }\DataTypeTok{cex =} \FloatTok{0.7}\NormalTok{, }\DataTypeTok{adj =} \FloatTok{0.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{11.PhyloTraits_Worksheet_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+In the R code chunk below, do the following:\\
+1. use the \texttt{fitContinuous()} function to compare your original
+tree to the transformed trees.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{fitContinuous}\NormalTok{(nj.rooted, nb, }\DataTypeTok{model =} \StringTok{"lambda"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## GEIGER-fitted comparative model of continuous data
+##  fitted 'lambda' model parameters:
+##  lambda = 0.020849
+##  sigsq = 0.106492
+##  z0 = 0.661368
+## 
+##  model summary:
+##  log-likelihood = 21.661104
+##  AIC = -37.322208
+##  AICc = -36.636494
+##  free parameters = 3
+## 
+## Convergence diagnostics:
+##  optimization iterations = 100
+##  failed iterations = 52
+##  frequency of best fit = NA
+## 
+##  object summary:
+##  'lik' -- likelihood function
+##  'bnd' -- bounds for likelihood search
+##  'res' -- optimization iteration summary
+##  'opt' -- maximum likelihood parameter estimates
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{fitContinuous}\NormalTok{(nj.lambda.}\DecValTok{0}\NormalTok{, nb, }\DataTypeTok{model =} \StringTok{"lambda"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## GEIGER-fitted comparative model of continuous data
+##  fitted 'lambda' model parameters:
+##  lambda = 0.000000
+##  sigsq = 0.106395
+##  z0 = 0.657777
+## 
+##  model summary:
+##  log-likelihood = 21.652293
+##  AIC = -37.304587
+##  AICc = -36.618872
+##  free parameters = 3
+## 
+## Convergence diagnostics:
+##  optimization iterations = 100
+##  failed iterations = 0
+##  frequency of best fit = 0.83
+## 
+##  object summary:
+##  'lik' -- likelihood function
+##  'bnd' -- bounds for likelihood search
+##  'res' -- optimization iteration summary
+##  'opt' -- maximum likelihood parameter estimates
+\end{verbatim}
+
+\textbf{\emph{Question 7}}: There are two important outputs from the
+\texttt{fitContinuous()} function that can help you interpret the
+phylogenetic signal in trait data sets. a. Compare the lambda values of
+the untransformed tree to the transformed (lambda = 0). b. Compare the
+Akaike information criterion (AIC) scores of the two models. Which model
+would you choose based off of AIC score (remember the criteria that the
+difference in AIC values has to be at least 2)? c. Does this result
+suggest that there's phylogenetic signal?
+
+\begin{quote}
+\textbf{\emph{Answer 7a}}: The lambda value of the original tree is
+.021, and the lambda value of the transformed tree is 0.\\
+\textbf{\emph{Answer 7b}}: The AIC value for the original tree is around
+-37, and the lambda value of the transformed tree is the same. These
+values mean the models are essentially identically, so it wouldn't
+matter which one I choose. I suppose I would choose the original because
+I can actually use it to draw relationships between different species.
+\textbf{\emph{Answer 7c}}: This results suggests little to no
+phylogenetic signal.
+\end{quote}
+
+\subsubsection{B) Phylogenetic Signal: Blomberg's
+K}\label{b-phylogenetic-signal-blombergs-k}
+
+In the R code chunk below, do the following:\\
+1. correct tree branch-lengths to fix any zeros,\\
+2. calculate Blomberg's K for each phosphorus resource using the
+\texttt{phylosignal()} function,\\
+3. use the Benjamini-Hochberg method to correct for false discovery
+rate, and\\
+4. calculate Blomberg's K for niche breadth using the
+\texttt{phylosignal()} function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nj.rooted}\OperatorTok{$}\NormalTok{edge.length <-}\StringTok{ }\NormalTok{nj.rooted}\OperatorTok{$}\NormalTok{edge.length }\OperatorTok{+}\StringTok{ }\DecValTok{10}\OperatorTok{^-}\DecValTok{7}
+\NormalTok{p.phylosignal <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\OtherTok{NA}\NormalTok{, }\DecValTok{6}\NormalTok{, }\DecValTok{18}\NormalTok{)}
+\KeywordTok{colnames}\NormalTok{(p.phylosignal) <-}\StringTok{ }\KeywordTok{colnames}\NormalTok{(p.growth.std)}
+\KeywordTok{rownames}\NormalTok{(p.phylosignal) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"K"}\NormalTok{, }\StringTok{"PIC.var.obs"}\NormalTok{, }\StringTok{"PIC.var.mean"}\NormalTok{,}
+                             \StringTok{"PIC.var.P"}\NormalTok{, }\StringTok{"PIC.var.z"}\NormalTok{, }\StringTok{"PIC.P.BH"}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{18}\NormalTok{)\{}
+\NormalTok{  x <-}\StringTok{ }\KeywordTok{as.matrix}\NormalTok{(p.growth.std[ ,i, }\DataTypeTok{drop =} \OtherTok{FALSE}\NormalTok{])}
+\NormalTok{  out <-}\StringTok{ }\KeywordTok{phylosignal}\NormalTok{(x, nj.rooted)}
+\NormalTok{  p.phylosignal[}\DecValTok{1}\OperatorTok{:}\DecValTok{5}\NormalTok{, i] <-}\StringTok{ }\KeywordTok{round}\NormalTok{(}\KeywordTok{t}\NormalTok{(out), }\DecValTok{3}\NormalTok{)}
+\NormalTok{\}}
+\NormalTok{p.phylosignal[}\DecValTok{6}\NormalTok{, ] <-}\StringTok{ }\KeywordTok{round}\NormalTok{(}\KeywordTok{p.adjust}\NormalTok{(p.phylosignal[}\DecValTok{4}\NormalTok{, ], }\DataTypeTok{method =} \StringTok{"BH"}\NormalTok{), }\DecValTok{3}\NormalTok{)}
+\NormalTok{signal.nb <-}\StringTok{ }\KeywordTok{phylosignal}\NormalTok{(nb, nj.rooted)}
+\NormalTok{signal.nb}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              K PIC.variance.obs PIC.variance.rnd.mean PIC.variance.P
+## 1 3.427719e-06         49966.78              50371.04          0.521
+##   PIC.variance.Z
+## 1    -0.02035049
+\end{verbatim}
+
+\textbf{\emph{Question 8}}: Using the K-values and associated p-values
+(i.e., ``PIC.var.P''``) from the \texttt{phylosignal} output, answer the
+following questions:
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\tightlist
+\item
+  Is there significant phylogenetic signal for niche breadth or
+  standardized growth on any of the phosphorus resources?\\
+\item
+  If there is significant phylogenetic signal, are the results
+  suggestive of clustering or overdispersion?
+\end{enumerate}
+
+\begin{quote}
+\textbf{\emph{Answer 8a}}: The phylogenetic signal is very low here, and
+not significant with a p-value of 0.5.\\
+\textbf{\emph{Answer 8b}}: There is no significant phylogenetic signal
+here.
+\end{quote}
+
+\subsubsection{C. Calculate Dispersion of a
+Trait}\label{c.-calculate-dispersion-of-a-trait}
+
+In the R code chunk below, do the following:\\
+1. turn the continuous growth data into categorical data,\\
+2. add a column to the data with the isolate name,\\
+3. combine the tree and trait data using the \texttt{comparative.data()}
+function in \texttt{caper}, and\\
+4. use \texttt{phylo.d()} to calculate \emph{D} on at least three
+phosphorus traits.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p.growth.pa <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{((p.growth }\OperatorTok{>}\StringTok{ }\FloatTok{0.01}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{1}\NormalTok{)}
+\KeywordTok{apply}\NormalTok{(p.growth.pa, }\DecValTok{2}\NormalTok{, sum)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      AEP      PEP      G1P      G6P   MethCP      BGP      DNA     Peth 
+##       20       38       35       34        3       35       19       21 
+##    Pchol       B1     Phyt      SRP     cAMP      ATP PhenylCP    PolyP 
+##       18       38       36       39       29       38        6       39 
+##      GDP      GTP 
+##       37       38
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p.growth.pa}\OperatorTok{$}\NormalTok{name <-}\StringTok{ }\KeywordTok{rownames}\NormalTok{(p.growth.pa)}
+
+\NormalTok{p.traits <-}\StringTok{ }\KeywordTok{comparative.data}\NormalTok{(nj.rooted, p.growth.pa, }\StringTok{"name"}\NormalTok{)}
+\KeywordTok{phylo.d}\NormalTok{(p.traits, }\DataTypeTok{binvar =}\NormalTok{ AEP)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Calculation of D statistic for the phylogenetic structure of a binary variable
+## 
+##   Data :  p.growth.pa
+##   Binary variable :  AEP
+##   Counts of states:  0 = 19
+##                      1 = 20
+##   Phylogeny :  nj.rooted
+##   Number of permutations :  1000
+## 
+## Estimated D :  0.4687249
+## Probability of E(D) resulting from no (random) phylogenetic structure :  0.005
+## Probability of E(D) resulting from Brownian phylogenetic structure    :  0.025
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{phylo.d}\NormalTok{(p.traits, }\DataTypeTok{binvar =}\NormalTok{ PhenylCP)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Calculation of D statistic for the phylogenetic structure of a binary variable
+## 
+##   Data :  p.growth.pa
+##   Binary variable :  PhenylCP
+##   Counts of states:  0 = 33
+##                      1 = 6
+##   Phylogeny :  nj.rooted
+##   Number of permutations :  1000
+## 
+## Estimated D :  0.8717874
+## Probability of E(D) resulting from no (random) phylogenetic structure :  0.268
+## Probability of E(D) resulting from Brownian phylogenetic structure    :  0.01
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{phylo.d}\NormalTok{(p.traits, }\DataTypeTok{binvar =}\NormalTok{ DNA)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Calculation of D statistic for the phylogenetic structure of a binary variable
+## 
+##   Data :  p.growth.pa
+##   Binary variable :  DNA
+##   Counts of states:  0 = 20
+##                      1 = 19
+##   Phylogeny :  nj.rooted
+##   Number of permutations :  1000
+## 
+## Estimated D :  0.604519
+## Probability of E(D) resulting from no (random) phylogenetic structure :  0.033
+## Probability of E(D) resulting from Brownian phylogenetic structure    :  0.002
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{phylo.d}\NormalTok{(p.traits, }\DataTypeTok{binvar =}\NormalTok{ cAMP)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Calculation of D statistic for the phylogenetic structure of a binary variable
+## 
+##   Data :  p.growth.pa
+##   Binary variable :  cAMP
+##   Counts of states:  0 = 10
+##                      1 = 29
+##   Phylogeny :  nj.rooted
+##   Number of permutations :  1000
+## 
+## Estimated D :  0.1354057
+## Probability of E(D) resulting from no (random) phylogenetic structure :  0
+## Probability of E(D) resulting from Brownian phylogenetic structure    :  0.341
+\end{verbatim}
+
+\textbf{\emph{Question 9}}: Using the estimates for \emph{D} and the
+probabilities of each phylogenetic model, answer the following
+questions:
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\tightlist
+\item
+  Choose three phosphorus growth traits and test whether they are
+  significantly clustered or overdispersed?\\
+\item
+  How do these results compare the results from the Blomberg's K
+  analysis?\\
+\item
+  Discuss what factors might give rise to differences between the
+  metrics.
+\end{enumerate}
+
+\begin{quote}
+\textbf{\emph{Answer 9a}}: For AEP, D = 0.47. For PhenylCP, D = 0.86.
+For cAMP, D = 0.14. All of these traits are overdispersed, with cAMP
+more randomly clumped, AEP less randomly clumped, and PhenylCP the least
+randomly clumped.\\
+\textbf{\emph{Answer 9b}}: These results show more phylogenetic signal
+than Blomberg's K did, more significance in the dispersal patterns.
+\textbf{\emph{Answer 9c}}: From my Googling, it seems that the consensus
+is that Blomberg's K is least accurate in testing for phylogenetic
+signal, but it is good at looking at changes over time. In this case
+we're looking at a static dataset, so it wouldn't be appropriate to use
+Blomberg's K here.
+\end{quote}
+
+\subsection{7) PHYLOGENETIC REGRESSION}\label{phylogenetic-regression}
+
+In the R code chunk below, do the following:\\
+1. Load and clean the mammal phylogeny and trait dataset, 2. Fit a
+linear model to the trait dataset, examining the relationship between
+mass and BMR, 2. Fit a phylogenetic regression to the trait dataset,
+taking into account the mammal supertree
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#I had issues with this code chunk not recognizing the columns selected. I double and triple checked that}
+\CommentTok{#the line and columns were typed correctly and matched the data. }
+
+\CommentTok{#mammal.Tree <- read.tree("./data/mammal_best_super_tree_fritz2009.tre")}
+\CommentTok{#mammal.data <- read.table("./data/mammal_BMR.txt", sep = "\textbackslash{}t", header = TRUE)}
+\CommentTok{#mammal.data <- mammal.data[,c("Species", "BMR_.m102.hour.", "Body_mass_for_BMR_.gr.")]}
+\CommentTok{#mammal.species <- array(mammal.data$Species)}
+\CommentTok{#pruned.mammal.tree <- drop.tip(mammal.Tree, mammal.Tree$tip.label[-na.omit(math(mammal.species, mammal))])}
+\CommentTok{#pruned.mammal.data <- mammal.data[mammal.data$Species %in% pruned.mammal.tree$tip.label,]}
+\CommentTok{#rownames(pruned.mammal.data) <- pruned.mammal.data$Species}
+
+\CommentTok{#fit <- lm(log10(BMR_.m102.hour.) ~ log10(Body_mass_for_BMR_.gr.), data = pruned.mammal.data)}
+\CommentTok{#plot(log10(pruned.mammal.data$Body_mass_for_BMR_.gr.), log10(pruned.mammal.data$BMR_.m102.hour.), la)}
+\CommentTok{#abline(a = fit$coefficients[1], b = fit4coefficients[2])}
+\CommentTok{#b1 <- round(fit$coefficients[2],3)}
+\CommentTok{#eqn <- bquote(italic(z) == .(b1))}
+\CommentTok{#text(0.5, 4.5, eqn, pos = 4)}
+
+\CommentTok{#fit.phy <- phylolm(log10(MR_.m102.hour.) ~ log10(Body_mass_for_BMR_.gr.), data = pruned.mammal.data,}
+ \CommentTok{#                  pruned.mammmal.tree, model = 'lambda', boot = 0)}
+\CommentTok{#plot(log10(pruned.mammal.data$Body_mass_for_BMR_.gr.), log10(pruned.mammal.data$BMR_.m102.hour.), las)}
+\CommentTok{#abline(a = fit.phy$coefficients[1], b = fit.phy$coefficients[2])}
+\CommentTok{#b1.phy <- round(fit.phy$coefficients[2],3)}
+\CommentTok{#eqn <-bquote(italic(z) == .(b1.phy))}
+\CommentTok{#text(0.5, 4.5, eqn, pos = 4)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\tightlist
+\item
+  Why do we need to correct for shared evolutionary history?
+\item
+  How does a phylogenetic regression differ from a standard linear
+  regression?
+\item
+  Interpret the slope and fit of each model. Did accounting for shared
+  evolutionary history improve or worsen the fit?
+\item
+  Try to come up with a scenario where the relationship between two
+  variables would completely disappear when the underlying phylogeny is
+  accounted for.
+\end{enumerate}
+
+\begin{quote}
+\textbf{\emph{Answer 10a}}: Since we are looking at the relationship
+between two variables, we need to correct for shared evolutionary
+history to keep the variables independent from one another.\\
+\textbf{\emph{Answer 10b}}: Phylogenetic regression is different from
+linear regression because it has to take into account the branch lengths
+of the phylogeny it's running the regression on. It also takes
+phylogenetic signal into account, which a linear regression does not
+need to do.\\
+\textbf{\emph{Answer 10c}}: Accounting for shared evolutionary history
+showed a stronger relationship between BMR and body mass, and improved
+the fit with the data. \textbf{\emph{Answer 10d}}: Coming up with an
+example is way harder than I thought it would be. :)
+\end{quote}
+
+\subsection{7) SYNTHESIS}\label{synthesis}
+
+Work with members of your Team Project to obtain reference sequences for
+10 or more taxa in your study. Sequences for plants, animals, and
+microbes can found in a number of public repositories, but perhaps the
+most commonly visited site is the National Center for Biotechnology
+Information (NCBI) \url{https://www.ncbi.nlm.nih.gov/}. In almost all
+cases, researchers must deposit their sequences in places like NCBI
+before a paper is published. Those sequences are checked by NCBI
+employees for aspects of quality and given an \textbf{accession number}.
+For example, here an accession number for a fungal isolate that our lab
+has worked with: JQ797657. You can use the NCBI program nucleotide
+\textbf{BLAST} to find out more about information associated with the
+isolate, in addition to getting its DNA sequence:
+\url{https://blast.ncbi.nlm.nih.gov/}. Alternatively, you can use the
+\texttt{read.GenBank()} function in the \texttt{ape} package to connect
+to NCBI and directly get the sequence. This is pretty cool. Give it a
+try.
+
+But before your team proceeds, you need to give some thought to which
+gene you want to focus on. For microorganisms like the bacteria we
+worked with above, many people use the ribosomal gene (i.e., 16S rRNA).
+This has many desirable features, including it is relatively long,
+highly conserved, and identifies taxa with reasonable resolution. In
+eukaryotes, ribosomal genes (i.e., 18S) are good for distinguishing
+course taxonomic resolution (i.e.~class level), but it is not so good at
+resolving genera or species. Therefore, you may need to find another
+gene to work with, which might include protein-coding gene like
+cytochrome oxidase (COI) which is on mitochondria and is commonly used
+in molecular systematics. In plants, the ribulose-bisphosphate
+carboxylase gene (\emph{rbcL}), which on the chloroplast, is commonly
+used. Also, non-protein-encoding sequences like those found in
+\textbf{Internal Transcribed Spacer (ITS)} regions between the small and
+large subunits of of the ribosomal RNA are good for molecular
+phylogenies. With your team members, do some research and identify a
+good candidate gene.
+
+After you identify an appropriate gene, download sequences and create a
+properly formatted fasta file. Next, align the sequences and confirm
+that you have a good alignment. Choose a substitution model and make a
+tree of your choice. Based on the decisions above and the output, does
+your tree jibe with what is known about the evolutionary history of your
+organisms? If not, why? Is there anything you could do differently that
+would improve your tree, especially with regard to future analyses done
+by your team?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#I did my due diligence in trying to get the muscle alignment to work per your instructions over email}
+\CommentTok{#but no dice.}
+\CommentTok{#I didn't expect much with my computer's track record, however. }
+
+\CommentTok{#read.aln <- read.alignment(file = ".11.PhyloTraits/wd.txt.txt", format = "fasta")}
+\CommentTok{#t.DNAbin <- as.DNAbin(read.aln)}
+\CommentTok{#window <- p.DNAbin[, 100:500]}
+\CommentTok{#image.DNAbin(window, cex.lab = 0.50)}
+
+\CommentTok{#seq.dist.K80 <- dist.dna(p.DNAbin, model = "K80", pairwise.deletion = FALSE)}
+
+\CommentTok{#par(mar = c(5, 5, 2, 1) + 0.1)}
+\CommentTok{#plot(seq.dist.raw, seq.dist.F84,}
+ \CommentTok{#    pch = 20, col = "red", las = 1, asp = 1, xlim = c(0, 0.7), ylim = c(0, 0.7), }
+  \CommentTok{#   xlab = "Raw Distance", ylab = "K80 Distance") }
+\CommentTok{#abline(b = 1, a = 0, lty = 2)}
+\CommentTok{#text(0.65, 0.6, "1:1")}
+
+\CommentTok{#K80.tree <- bionj(seq.dist.K80)}
+\CommentTok{#K80.outgroup <- match("Methanosarcina", K80.tree$tip.label)}
+\CommentTok{#K80.rooted <- root(K80.tree, K80.outgroup, resolve.root = TRUE)}
+\CommentTok{#layout(matrix(c(1,2), 1, 2), width = c(1, 1))}
+\CommentTok{#par(mar = c(1, 1, 2, 0))}
+\CommentTok{#par(mar = c(1, 0, 2, 1))}
+\CommentTok{#plot.phylo(K80.rooted, type = "phylogram", direction = "left", show.tip.label = TRUE,}
+\CommentTok{#           use.edge.length = FALSE, adj = 0.5, cex = 0.6, label.offset = 2, main = "K80")}
+
+\CommentTok{#These sequences come from freshwater microbial data from https://mmbr.asm.org/content/mmbr/75/1/14.full.pdf}
+
+\CommentTok{#>FJ916807.1 Uncultured actinobacterium clone CH1A11 16S ribosomal RNA gene, partial sequence}
+\CommentTok{#TTTTTCGGTTGAAGATGATCTCGCGGCCTATCAGCTTGTTGGTGAGGTAATGGCTCACCAAGGCGACGAC}
+\CommentTok{#GGGTAGCCGGCCTGAGAGGGCGACCGGCCACACTGGGACTGAGACACGGCCCAGACTCCTACGGGAGGCA}
+\CommentTok{#GCAGTGGGGAATATTGGGCAATGGAGGAAACTCTGACCCAGCGACGCCGCGTGCGGGATGAAGGCCTTCG}
+\CommentTok{#GGTTGTAAACCGCTTTCACCAGGGAAGAAGCGAAAGTGACGGTACCTGCAAAAAGAAGCACCGGCTAACT}
+\CommentTok{#ATGTGCCAGCAGCCGCGGTAATACATAGGGTGCAAGCGTTGTCCGGAATTATTGGGCGTAAAGAGCTCTT}
+\CommentTok{#AGGTGGTTCGTCTCGTCGGATGTGAAACTCTGGGGCTTAACCCCA}
+
+\CommentTok{#>FJ916903.1 Uncultured Bacteroidetes bacterium clone ME7bC6 16S ribosomal RNA gene, partial sequence}
+\CommentTok{#ACGGTGATCCTTCTGTACATAGCTGGTGCACGGGCTGCGTTAACACGCTATGCAACCTACCTTACATTGG}
+\CommentTok{#GGGATAGCCTTTCGAAAGGGAGCATTAATACCGCATAAGACAGCTAGCTGGGCATCCAGCAGCTGTTAAA}
+\CommentTok{#TGATCTATCGATGTAAGATGGGCATGCGTCCAATTAGTCAGTTGGCGAGGCAACGGCTCACCAAGACTTT}
+\CommentTok{#GATTGGTAGGGGAACTGAGAGGTCAATCCCCCACACTGGCACTGAGATACGGGCCAGACTCCTACGGGAG}
+\CommentTok{#GCAGCAGTAGGGAATATTGGGCAATGGACGCAAGTCTGACCCAG}
+
+\CommentTok{#>HQ386253.1 Bacteroidetes bacterium enrichment culture clone LiUU-12-16 16S ribosomal RNA gene, partial sequence}
+\CommentTok{#GGAATATTGGTCAATGGGCGCAAGCCTGAACCAGCCATGCCGCGTGCAGGAAGAATGCCCTATGGGTTGT}
+\CommentTok{#AAACTGCTTTTATTTAGGAATAAACCTTTCTACGTGTAGAAAGCTGAAGGTACTGAATGAATAAGCACCG}
+\CommentTok{#GCTAACTCCGTGCCAGCAGCCGCGGTAATACGGAGGGTGCAAGCGTTATCCGGAATCATTGGGTTTAAAG}
+\CommentTok{#GGTCCGCAGGCGGGCGTATAAGTCAGTGGTGAAATCCTGCAGCTTAACTGCAGAACTGCCATTGATACTG}
+\CommentTok{#TACGTCTTGAATTCGGTCGAAGTGGGCGGAATGTGTAGTGTAGCGGTGAAATGCATAGATATTACACAGA}
+\CommentTok{#ACACCGATAGCGAAGGCTGCTCACTAGGCCTGGATTGACGCTCAGGGACGAAAGCGTGGGGATCAAACAG}
+\CommentTok{#GATAGATACCCTGGTAGTCCACGC}
+
+\CommentTok{#>HQ386631.1 Bacterium enrichment culture clone LiUU-18-315 16S ribosomal RNA gene, partial sequence}
+\CommentTok{#CAGCCGCCGCGCTAATTCGAAGGGTGCGAGCGTTATTCGGATTTACTGGGCGTAAAGGGCGCGTAGGCGG}
+\CommentTok{#CTTTTTAAGTCACTTGTTAAAGACCACTTAAATCGGTGGAGATGCGGGTGAAACTGGAGAGCTAGAGGGT}
+\CommentTok{#AGGAGAGAGAAGTGGAATTCTTGGAGTAGCGGTAAAATGCGTAGATCTCAAGAGGAACACCGATGGCGAA}
+\CommentTok{#GGCAGCTTCTTGGCCTACTACTGACGCTGAGGCGCGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTG}
+\CommentTok{#GTAGTCCACGCTGTAAACGATGATCACTAGATGTCAGCTTCCCTTGAGGAGGTTGGTATCGTAGCTAACG}
+\CommentTok{#CGATAAGTGATCCGCCTGGGGAGTACGGTCGCAAGACTAAAACTTAAATGAATTGACGG}
+
+\CommentTok{#>HQ530565.1 Uncultured actinobacterium clone 30LAKE01A03 16S ribosomal RNA gene, partial sequence}
+\CommentTok{#CGCATTAAGCGTCCCGCCTGGGGAGTACGACCGCAAGGTTAAAACTCAAAGGAACTGACCGGGGGCCCGC}
+\CommentTok{#ACAAGCAGCGGAGCATGCGGCTTAATTCGATGCAACGCGAAGAACCTTACCTAGGCTTGACATGCATTGA}
+\CommentTok{#AAACTGTTAGAGATAACAGGTCCGCAAGGGCTTTGCACAGGTGGTGCATGGCTGTCGTCAGCTCGTGTCG}
+\CommentTok{#TGAGATGTTGGGTTAAGTCCCGCAACGAGCGCAACCCTCGTCTTGTGTTGCCAACAGGTAATGCTGGGAA}
+\CommentTok{#CTCACAAGAGACTGCCGGGGTCAACTCGGAGGAAGGTGGGGACGACGTCAAGTCATCATGCCCCTTATGT}
+\CommentTok{#CTAGGGCTGCACGCATGCTACAATGGCCGATACAAAGGGCTGCGATACCGCAAGGTGGAGCGAATCCCAT}
+\CommentTok{#AAAGTCGGTCTCAGTTCGGATTGAGGTCTGCAACTCGACCTCATGAAGTTGGAGTTGCTAGTAATCGCGG}
+\CommentTok{#ATCAGCAACGCCGCGGTGAATACGTTCCCGGGCCTTGTACACACCGCCCGTCACGTCACGAAAGTCGGTA}
+\CommentTok{#ACACCCAAAACCAGTGTTCCAACCGTAAGGGGGAAGCTG}
+
+\CommentTok{#>HQ532908.1 Uncultured actinobacterium clone TB1H9 16S ribosomal RNA gene, partial sequence}
+\CommentTok{#TTCGACGCAACGCGAAGAACCTTACCAAGGCTCGACATATACCGAAAAGCAGCAGAGATGTTGTGTCCGC}
+\CommentTok{#AAGGGCGGTATACAGGTGGTGCATGGTTGTCGTCAGCTCGTGTCGTGAGATGTTGGGTTAAGTCCCGCAA}
+\CommentTok{#CGGGCGCAACCCTCGTTCTGTGTTGCCAGCATTTAGTTGGGGGCTCACAGGAGACTGCCGTGGTCAACAC}
+\CommentTok{#GGAGGAAGGTGGGGATGACGTCAAATCATCATGCCCCTTATGTCTTGGGCTGCACGCATGCTACAATGGC}
+\CommentTok{#AGGTACAAAGGGCTGCGATACCGTAAGGTGGAGCGAATCCCAAAAAGTCTGTCTCAGTTCGGATTGAGGT}
+\CommentTok{#CTGCAACTCGACCTCATGAAGTCGGAGTTGCTAGTAATCGTAGATCAGCAACGCTACGGTGAATACGTTC}
+\CommentTok{#CCGGGGCTTGTACACACCGCCCGTCACGTCACGAAAGTCGGTAACACCCAAAGTCAGTGGCCCAACCGCA}
+\CommentTok{#AGGA}
+
+\CommentTok{#>FJ916875.1 Uncultured Bacteroidetes bacterium clone MI1A7 16S ribosomal RNA gene, partial sequence}
+\CommentTok{#TCGAGGGGTAGAGTAAGCTTGCTTACTTGAGACCGGCGCACGGGTGCGTAACGCGTATGCAATCTACCTT}
+\CommentTok{#ATACAGGGGAATAGCCCAGAGAAATTTGGATTAATGCCCCATGGTATTATAGAGTGGCATCACTTTATAA}
+\CommentTok{#TTAAAGTTCCAACGGTATAAGATGAGCATGCGTCCCATTAGTTAGTTGGTAAGGTAACGGCTTACCAAGA}
+\CommentTok{#CGATGATGGGTAGGGGTCCTGAGAGGGAGATCCCCCACACTGGTACTGAGACACGGACCA}
+
+\CommentTok{#>HQ386400.1 Bacterium enrichment culture clone LiUU-15-729 16S ribosomal RNA gene, partial sequence}
+\CommentTok{#CAGCCGCCGCGGTAATACAGAGGATGCAAGCGTTATCCGGAATCACTGGGCATAAAGCGTCTGTAGGTTG}
+\CommentTok{#CCTACCAAGTCTGCTGTTAAAGATCAGGGCCTAACCCTGGGAAAGCAGTGGAAACTAGTAGGCTTGAGTG}
+\CommentTok{#TGGTAGAGGTAGAGGGAATTCCTGGTGTAGCGGTGAAATGCGTAGATATTAGGAAGAACACCAATGGCGA}
+\CommentTok{#AAGCACTCTACTGGGCCATAACTGACACTGAGAGACGACAGCTAGGGGAGCAAATGGGATTAGATACCCC}
+\CommentTok{#AGTAGTCCTAGCCGTAAACGATGGATACTAGGTGTTGCACGTATTAACCCGTGCAGTATCGTAGCTAAGG}
+\CommentTok{#CGTTAAGTATCCCGCCTGGGAAGTACGCTCGCAAGAGTGAAACTTAAATGAATTGACGG}
+
+\CommentTok{#>HQ530755.1 Uncultured actinobacterium clone 30LAKE31D05 16S ribosomal RNA gene, partial sequence}
+\CommentTok{#CGGAGCATGCGGCTTAATTCGACGCAACGCGAAGAACCTTACCAAGGCTTGACATATACAGGAATATGGC}
+\CommentTok{#AGAGATGTCATAGCCGCAAGGTCTGTATACAGGTGGTGCATGGTTGTCGTCAGCTCGTGTCGTGAGATGT}
+\CommentTok{#TGGGTTAAGTCCCGCAACGAGCGCAACCCTCGTTCTGTGTTGCCAGCATTTAGTTGGGGACTCACAGGAG}
+\CommentTok{#ACTGCCGGGGTTAACTCGGAGGAAGGTGGGGATGACGTCAAATCATCATGCCCCTTATGTCTTGGGCTGC}
+\CommentTok{#ACGCATGCTACAATGGCTGGTACAAACGGCTGCGATACCGCAAGGTGGAGCGAATCCGATAAAGCCAGTC}
+\CommentTok{#TCAGTTCGGATTGGGGTCTGCAACTCGACCCCATGAAGTCGGAGTTGCTAGTAATCGTAGATCAGCAACG}
+\CommentTok{#CTACGGTGAATACGTTCCCGGGGCTTGTACACACCGCCCGTCACATCACGAAAGTCGGAACACCCAAAGT}
+\CommentTok{#CAGT}
+
+\CommentTok{#>FJ916900.1 Uncultured beta proteobacterium clone LT1bG1 16S ribosomal RNA gene, partial sequence}
+\CommentTok{#AACGCGCTGAGTAATACATCGTGAACGTACCTTATCGTGGGGGATAACGCAGCGAAAGTTGCGCTAACTA}
+\CommentTok{#CCGCATACGCCCTGAGGGGGAAAGCGGGGGACCGTAAGGCCTCGCGCGATTAGAGCGGCCGATGTCTGAT}
+\CommentTok{#TAGCTTGTTGGTGAGGTAAAAGCTCACCAAGGCGATGATCAGTAGCTGGTCTGAGAGGACGATCATCCAC}
+\CommentTok{#ACTGGGACTGAGACACGGCCCAGACTCCTACGGGAGGCAGCAGTGGGGAATTTTGGACAATGGGGGCAAC}
+\CommentTok{#CCTGATCCAGCAATGCCT}
+
+\CommentTok{#>FJ917000.1 Batocarpus costaricensis voucher GW1463 18S ribosomal RNA gene, partial sequence; internal transcribed spacer 1, 5.8S ribosomal RNA gene, and #internal transcribed spacer 2, complete sequence; and 28S ribosomal RNA gene, partial sequence}
+\CommentTok{#MTKCSAWWGATATTGTTGAAACCTGCCCAGCAGAAAGACCCGTGAACACGTTACAACACTCGGGGGGGCG}
+\CommentTok{#AGGGGCGCCGCGCGCGCCTTGATTCCCCCCACGCCGAGTGCGCGTGGCTTTGCCCCGCGTCCCCGGACAC}
+\CommentTok{#TAACCAACCCCGGCGCGGAATGCGTCAAGGAAACATAAACAAACGAGCTTCTGCTGCAGCCCCGGACTCG}
+\CommentTok{#GTGCTTGCTGCGGCGGACGTGTCGTGTTTCGTTTAAGTCTTAAAACGACTCTCGGCAACGGATATCTCGG}
+\CommentTok{#CTCTCGCATCGATRAAGAACGTAGCGAAATGCGATACTTGGTGTGAATTGCAGAATCCCGTGAACCATCG}
+\CommentTok{#AGTCTTTGAACGCAAGTTGCGCCCGAAGCCATCCGGCCGAGGGCACGTCTGCCTGGGCGTCACACACCGT}
+\CommentTok{#TGCCCCCCCTAAATCCCTTTGGCGCCGTCCATATGGTGCATGGGGACTACGGGGGGCGGATGATGGCCTC}
+\CommentTok{#CCGTGGGCCTTGACCCGCGGCTGGTCTAAATTTGAGTCCCCGGTCACGGTTGCCGTGGCAATAGGTGGTC}
+\CommentTok{#GTCGAACATTCGGTGCCCCGCCATGTGCTCTGGACAGAAAGCATCGGGAGACTTTACAAACTCGACCCCG}
+\CommentTok{#ACGCACCCCACGCGGGTGCTTCCAACGCGAACCCAGGTCAGCG}
+
+\CommentTok{#>FJ916950.1 Physalia sp. DRP-2009 isolate Foxton3 cytochrome oxidase subunit I (COI) gene, partial cds; mitochondrial}
+\CommentTok{#CCGGGAGCTCTCATATTAAATATAGTGGTTATAAAGTTAATGGCACCCATGATTGATGAGGCACCTGCAC}
+\CommentTok{#AGTGTAAACTGAAGATAGCCATATCAACTGACCCTCCGGAATGAGTTTGGGGGCCAGACAAAGGAGGGTA}
+\CommentTok{#AACAGTTCAACCAGTACCTGCACCTTGTTCTATTAGAGATGACCCTAGTAATAATAATAGAGCAGGGGGC}
+\CommentTok{#AGTAACCAAAAACTTAGGTTATTCAACCTAGGAAAGGCCATATCCGGAGCACCTATAAACAGGGGTACGA}
+\CommentTok{#ACCAGTTACCAAATCCTCCAATTAGAACTGGCATTACAAGGAAAAAGATCATAACAAATGCATGAGCAGT}
+\CommentTok{#TACTATAACATTATAGAGATGATCATCTCCAAACATGGTACCAGGTCCTGACAATTCCAATCTGA}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}
