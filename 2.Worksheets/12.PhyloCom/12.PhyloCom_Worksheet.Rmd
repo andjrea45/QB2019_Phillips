@@ -315,13 +315,32 @@ In the following R code chunk:
 2. calculate the explained variation on the first three PCoA axes. 
 
 ```{r}
+tax.pcoa <- cmdscale(dist.mp, eig = T, k = 3)
+explainvar1 <- round(tax.pcoa$eig[1] / sum(tax.pcoa$eig), 3) * 100
+explainvar2 <- round(tax.pcoa$eig[2] / sum(tax.pcoa$eig), 3) * 100
+explainvar3 <- round(tax.pcoa$eig[3] / sum(tax.pcoa$eig), 3) * 100
+sum.tax <- sum(explainvar1, explainvar2, explainvar3)
 
+par(mar = c(5, 5, 1, 2) +0.1)
+plot(tax.pcoa$points[ ,1], tax.pcoa$points[ ,2],
+     xlim = c(-0.2, 0.2), ylim = c(-.16, 0.16),
+     xlab = paste("PCoA 1 (", explainvar1, "%)", sep = ""),
+     ylab = paste("PCoA 2 (", explainvar2, "%)", sep = ""),
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
+axis(side = 1, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+points(tax.pcoa$points[ ,1], tax.pcoa$points[ ,2],
+       pch = 19, cex = 3, bg = "gray", col = "gray")
+text(tax.pcoa$points[ ,1], tax.pcoa$points[ ,2],
+     labels = row.names(tax.pcoa$points))
 ```
 
 ***Question 5***: Using a combination of visualization tools and percent variation explained, how does the phylogenetically based ordination compare or contrast with the taxonomic ordination? 
 What does this tell you about the importance of phylogenetic information in this system?
 
-> ***Answer 5***: 
+> ***Answer 5***: They are quite different, the taxonomic ordination alone hardly shows any variation in the system, while the phylogenetic ordination clearly shows quite a bit more variation. This shows that phylogenetic information tells a lot more about this system than taxonomic data alone. 
 
 ### C. Hypothesis Testing
 
@@ -402,7 +421,7 @@ axis(side = 4, lwd.ticks = 2, cex.axis = 1.2, las= 1, col = "red", lwd = 2.2,
 
 ***Question 6***: Based on the multivariate procedures conducted above, describe the phylogenetic patterns of $\beta$-diversity for bacterial communities in the Indiana ponds.   
 
-> ***Answer 6***: fd
+> ***Answer 6***: It appears that the environmental factors are each a contributor to the probable appearance of bacterial species in the communities. To give a more extreme example, BC051 (top left) is strongly negatively correlated with ORP, DOC, and Elevation, and strongly positively correlated with Temp, SpC, and Depth. BC049 (bottom left) is strongly negatively correlated with Color, Elevation, and DOC, and strongly positively correlated with chla and pH. Overall, the environmental features of each pond are going to fairly significantly impact the community composition of the bacteria. 
 
 ## 6) SPATIAL PHYLOGENETIC COMMUNITY ECOLOGY
 
@@ -470,7 +489,7 @@ diffslope(df$geo.dist, df$unifrac, df$geo.dist, df$bray.curtis)
 
 ***Question 7***: Interpret the slopes from the taxonomic and phylogenetic DD relationships. If there are differences, hypothesize why this might be.   
 
-> ***Answer 7***: 
+> ***Answer 7***: The difference in slope is small, only .002, but this is significant with a p-value of .004. This may be because evolutionary history is also impacting the community composition, and not just the change in environment and dispersal limitations as distance increases between the bogs. 
 
 
 ## SYNTHESIS
